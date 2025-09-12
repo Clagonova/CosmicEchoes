@@ -24,7 +24,7 @@ var oxygen := max_oxygen
 @export var fatigue_run_drain := 1.0
 @export var fatigue_jump_drain := 1.3
 @export var fatigue_crouch_drain := 0.25
-@export var oxygen_vacuum_drain := 0.0
+@export var oxygen_vacuum_drain := 0.1
 
 # Decay/recovery
 @export var hunger_decay_rate := 0.5
@@ -127,16 +127,20 @@ func _input(event):
 	# Fill health
 	if event.is_action_pressed("debug_fill_health"):
 		health = min(health + 100, max_health)
-		print("Debug: Fatigue += 100, current =", health)
+		print("Cheat: Health Filled.")
 	# Fill hunger
 	if event.is_action_pressed("debug_fill_hunger"):
 		hunger = min(hunger + 100, max_hunger)
-		print("Debug: Fatigue += 100, current =", hunger)
+		print("Cheat: Hunger Filled.")
 	# Fill thirst
 	if event.is_action_pressed("debug_fill_thirst"):
 		thirst = min(thirst + 100, max_thirst)
-		print("Debug: Fatigue += 100, current =", thirst)
+		print("Cheat: Thirst Filled.")
 	# Fill fatigue
 	if event.is_action_pressed("debug_fill_fatigue"):
 		fatigue = min(fatigue + 100, max_fatigue)
-		print("Debug: Fatigue += 100, current =", fatigue)
+		print("Cheat: Fatigue Filled.")
+	# Fill oxygen
+	if event.is_action_pressed("debug_fill_oxygen"):
+		oxygen = min(oxygen + 100, max_oxygen)
+		print("Cheat: Oxygen Filled.")

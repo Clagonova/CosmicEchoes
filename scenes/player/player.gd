@@ -22,8 +22,10 @@ const PlayerState = preload("res://scenes/player/player_states.gd").PlayerState
 @export var crouch_speed := 2.5
 
 # --- Thruster ---
-@export var thruster_force := 18.0
-@export var thruster_oxygen_rate := 8.0
+@export var thruster_force := 3.0
+@export var thruster_boost_force := 7.0
+@export var thruster_oxygen_rate := 0.8
+@export var thruster_boost_oxygen_rate := 3.8
 
 # --- Camera ---
 @export var mouse_sens := 0.1
@@ -103,12 +105,21 @@ func _physics_process(delta):
 		else:
 			state = PlayerState.IDLE
 
-	# --- Fatigue drain ---
-	vitals.apply_fatigue_drain(state, delta)
-
-	# --- MOVEMENT ---
+	# --- VITALS drain ---
 	if state == PlayerState.ZEROG:
-		# ZeroG thruster kontrolü
+		# ZeroG hareket
+		if moving:
+			var oxygen_used = vitals.use_oxygen(thruster_oxygen_rate * delta)
+			if oxygen_used > 0.0:
+				# oksijen varsa hareket uygula
+				velocity += direction * thruster_force * delta
+			# oksijen yoksa: sadece sürüklenmeye devam (velocity korunuyor)
+	else:
+		vitals.apply_fatigue_drain(state, delta)
+
+	# --- MOVEMENT & VITALS DRAIN ---
+	if state == PlayerState.ZEROG:
+		# --- ZERO-G MOVEMENT ---
 		var thrust_input = Vector3.ZERO
 		thrust_input += direction
 		if Input.is_action_pressed("jump"): # yukarı
@@ -117,13 +128,23 @@ func _physics_process(delta):
 			thrust_input.y -= 1.0
 
 		if thrust_input.length() > 0.01:
-			velocity += thrust_input.normalized() * thruster_force * delta
-			# burada vitals.oxygen drain eklenebilir
+			# Oksijen varsa thruster çalışır
+			var sprinting = Input.is_action_pressed("sprint")
+			var speed = thruster_boost_force if sprinting else thruster_force
+			var oxygen_needed = thruster_boost_oxygen_rate * delta if sprinting else thruster_oxygen_rate * delta
+			var oxygen_used = vitals.use_oxygen(oxygen_needed)
+			if oxygen_used > 0.0:
+				velocity += thrust_input.normalized() * speed * delta
+			else:
+				# oksijen bitti: input ignored, sadece mevcut velocity korunuyor
+				pass
 		else:
+			# input yoksa velocity kademeli olarak düşer
 			velocity = lerp(velocity, Vector3.ZERO, delta * 0.5)
-
 	else:
-		# --- SPEED ---
+		vitals.apply_fatigue_drain(state, delta)
+		
+		# --- NORMAL MOVEMENT ---
 		var speed = walk_speed
 		match state:
 			PlayerState.RUNNING:
@@ -131,17 +152,14 @@ func _physics_process(delta):
 			PlayerState.CROUCHING:
 				speed = crouch_speed
 
-		# --- VELOCITY X/Z ---
 		var target_velocity = direction * speed
 		velocity.x = lerp(velocity.x, target_velocity.x, accel * delta if moving else decel * delta)
 		velocity.z = lerp(velocity.z, target_velocity.z, accel * delta if moving else decel * delta)
 
-		# --- JUMP ---
 		if is_on_floor():
 			velocity_y = 0.0
 			jumping = false
 			jump_timer = 0.0
-
 			if Input.is_action_just_pressed("jump") and state != PlayerState.CROUCHING:
 				velocity_y = min_jump_force
 				jumping = true
@@ -184,23 +202,23 @@ func _physics_process(delta):
 	var target_breath_amplitude = 0.025
 	match state:
 		PlayerState.IDLE:
-			target_breath_speed = 0.9
-			target_breath_amplitude = 0.02
-		PlayerState.CROUCHING:
-			target_breath_speed = 0.7
+			target_breath_speed = 0.6
 			target_breath_amplitude = 0.015
+		PlayerState.CROUCHING:
+			target_breath_speed = 0.4
+			target_breath_amplitude = 0.01
 		PlayerState.WALKING:
-			target_breath_speed = 1.2
-			target_breath_amplitude = 0.03
+			target_breath_speed = 1.3
+			target_breath_amplitude = 0.025
 		PlayerState.RUNNING:
-			target_breath_speed = 2.0
-			target_breath_amplitude = 0.05
-		PlayerState.JUMPING:
-			target_breath_speed = 1.8
+			target_breath_speed = 1.9
 			target_breath_amplitude = 0.04
+		PlayerState.JUMPING:
+			target_breath_speed = 2.2
+			target_breath_amplitude = 0.055
 		PlayerState.ZEROG:
-			target_breath_speed = 1.5
-			target_breath_amplitude = 0.035
+			target_breath_speed = 0.8
+			target_breath_amplitude = 0.015
 
 	current_breath_speed = lerp(current_breath_speed, target_breath_speed, delta * 2.0)
 	current_breath_amplitude = lerp(current_breath_amplitude, target_breath_amplitude, delta * 2.0)
