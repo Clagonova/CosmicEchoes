@@ -165,7 +165,7 @@ layout_mode = 2
 theme = SubResource("Theme_4b0k3")
 value = 100.0
 
-[node name="O2Bar" type="ProgressBar" parent="."]
+[node name="OxygenBar" type="ProgressBar" parent="."]
 unique_name_in_owner = true
 anchors_preset = 2
 anchor_top = 1.0
