@@ -9,21 +9,6 @@ height = 1.8
 
 [node name="Player" type="CharacterBody3D"]
 script = ExtResource("1_wr5hl")
-walk_speed = null
-run_speed = null
-gravity = null
-accel = null
-decel = null
-min_jump_force = null
-max_jump_force = null
-jump_hold_time = null
-crouch_height = null
-stand_height = null
-crouch_speed = null
-mouse_sens = null
-mouse_smooth = null
-max_sway_angle = null
-sway_speed = null
 
 [node name="Vitals" parent="." instance=ExtResource("2_4kuee")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, 0)

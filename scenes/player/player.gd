@@ -21,6 +21,10 @@ const PlayerState = preload("res://scenes/player/player_states.gd").PlayerState
 @export var stand_height := 1.8
 @export var crouch_speed := 2.5
 
+# --- Thruster ---
+@export var thruster_force := 18.0
+@export var thruster_oxygen_rate := 8.0
+
 # --- Camera ---
 @export var mouse_sens := 0.1
 @export var mouse_smooth := 0.5
@@ -39,6 +43,7 @@ var camera
 var collision_shape
 var ceiling_check
 var current_height := 0.0
+var is_in_space := true  # ileride gravity system ile değişecek
 
 var yaw := 0.0
 var pitch := 0.0
@@ -77,66 +82,89 @@ func _physics_process(delta):
 	# --- INPUT ---
 	var input_dir = Input.get_vector("move_left", "move_right", "move_forward", "move_back")
 	var direction = (transform.basis * Vector3(input_dir.x, 0, input_dir.y)).normalized()
-
 	var moving = direction.length() > 0.01
 	var crouch_pressed = Input.is_action_pressed("crouch")
 	var sprint_pressed = Input.is_action_pressed("sprint")
+	
+	# --- DEBUG GRAVITY SWITCH ---
+	if Input.is_action_just_pressed("debug_switch_gravity"):
+		is_in_space = not is_in_space
 
 	# --- STATE DETERMINATION ---
-	if not is_on_floor():
-		state = PlayerState.JUMPING
-	elif crouch_pressed or ceiling_check.is_colliding():
-		# Tuşa basılıysa veya kafanda tavan varsa CROUCHING
-		state = PlayerState.CROUCHING
-	elif moving:
-		state = PlayerState.RUNNING if sprint_pressed else PlayerState.WALKING
+	if is_in_space:
+		state = PlayerState.ZEROG
 	else:
-		state = PlayerState.IDLE
+		if not is_on_floor():
+			state = PlayerState.JUMPING
+		elif crouch_pressed or ceiling_check.is_colliding():
+			state = PlayerState.CROUCHING
+		elif moving:
+			state = PlayerState.RUNNING if sprint_pressed else PlayerState.WALKING
+		else:
+			state = PlayerState.IDLE
 
+	# --- Fatigue drain ---
 	vitals.apply_fatigue_drain(state, delta)
 
-	# --- SPEED ---
-	var speed = walk_speed
-	match state:
-		PlayerState.RUNNING:
-			speed = run_speed
-		PlayerState.CROUCHING:
-			speed = crouch_speed
+	# --- MOVEMENT ---
+	if state == PlayerState.ZEROG:
+		# ZeroG thruster kontrolü
+		var thrust_input = Vector3.ZERO
+		thrust_input += direction
+		if Input.is_action_pressed("jump"): # yukarı
+			thrust_input.y += 1.0
+		if crouch_pressed: # aşağı
+			thrust_input.y -= 1.0
 
-	# --- VELOCITY X/Z ---
-	var target_velocity = direction * speed
-	velocity.x = lerp(velocity.x, target_velocity.x, accel * delta if moving else decel * delta)
-	velocity.z = lerp(velocity.z, target_velocity.z, accel * delta if moving else decel * delta)
+		if thrust_input.length() > 0.01:
+			velocity += thrust_input.normalized() * thruster_force * delta
+			# burada vitals.oxygen drain eklenebilir
+		else:
+			velocity = lerp(velocity, Vector3.ZERO, delta * 0.5)
 
-	# --- JUMP ---
-	if is_on_floor():
-		velocity_y = 0.0
-		jumping = false
-		jump_timer = 0.0
-
-		if Input.is_action_just_pressed("jump") and state != PlayerState.CROUCHING:
-			# sadece CROUCHING değilken zıpla
-			velocity_y = min_jump_force
-			jumping = true
 	else:
-		velocity_y -= gravity * delta
+		# --- SPEED ---
+		var speed = walk_speed
+		match state:
+			PlayerState.RUNNING:
+				speed = run_speed
+			PlayerState.CROUCHING:
+				speed = crouch_speed
 
-	if jumping and Input.is_action_pressed("jump") and jump_timer < jump_hold_time:
-		var t = jump_timer / jump_hold_time
-		var extra_force = lerp(min_jump_force, max_jump_force, t)
-		velocity_y = extra_force
-		jump_timer += delta
+		# --- VELOCITY X/Z ---
+		var target_velocity = direction * speed
+		velocity.x = lerp(velocity.x, target_velocity.x, accel * delta if moving else decel * delta)
+		velocity.z = lerp(velocity.z, target_velocity.z, accel * delta if moving else decel * delta)
 
-	velocity.y = velocity_y
+		# --- JUMP ---
+		if is_on_floor():
+			velocity_y = 0.0
+			jumping = false
+			jump_timer = 0.0
 
-	# --- CROUCH HEIGHT & HEAD POSITION ---
-	var target_height = stand_height if state != PlayerState.CROUCHING else crouch_height
-	current_height = lerp(current_height, target_height, delta * 10.0)
-	collision_shape.shape.height = current_height
-	collision_shape.position.y = current_height / 2.0
+			if Input.is_action_just_pressed("jump") and state != PlayerState.CROUCHING:
+				velocity_y = min_jump_force
+				jumping = true
+		else:
+			velocity_y -= gravity * delta
 
-	var target_head_pos = Vector3(0, 1.6, 0) if state != PlayerState.CROUCHING else Vector3(0, 0.9, 0)
-	head.position = head.position.lerp(target_head_pos, delta * 10.0)
+		if jumping and Input.is_action_pressed("jump") and jump_timer < jump_hold_time:
+			var t = jump_timer / jump_hold_time
+			var extra_force = lerp(min_jump_force, max_jump_force, t)
+			velocity_y = extra_force
+			jump_timer += delta
+
+		velocity.y = velocity_y
+
+	# --- CROUCH HEIGHT ---
+	if state != PlayerState.ZEROG:
+		var target_height = stand_height if state != PlayerState.CROUCHING else crouch_height
+		current_height = lerp(current_height, target_height, delta * 10.0)
+		collision_shape.shape.height = current_height
+		collision_shape.position.y = current_height / 2.0
+
+		var target_head_pos = Vector3(0, 1.6, 0) if state != PlayerState.CROUCHING else Vector3(0, 0.9, 0)
+		head.position = head.position.lerp(target_head_pos, delta * 10.0)
 
 	# --- SWAY ---
 	var lateral_velocity = velocity.dot(transform.basis.x)
@@ -170,6 +198,9 @@ func _physics_process(delta):
 		PlayerState.JUMPING:
 			target_breath_speed = 1.8
 			target_breath_amplitude = 0.04
+		PlayerState.ZEROG:
+			target_breath_speed = 1.5
+			target_breath_amplitude = 0.035
 
 	current_breath_speed = lerp(current_breath_speed, target_breath_speed, delta * 2.0)
 	current_breath_amplitude = lerp(current_breath_amplitude, target_breath_amplitude, delta * 2.0)

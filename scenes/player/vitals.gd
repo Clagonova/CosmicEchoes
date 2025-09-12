@@ -2,16 +2,21 @@ extends Node3D
 
 const PlayerState = preload("res://scenes/player/player_states.gd").PlayerState
 
-# Temel hayatta kalma değerleri
+signal oxygen_depleted
+signal oxygen_low(new_value: float)
+
+# --- Temel hayatta kalma değerleri
 @export var max_health := 100.0
 @export var max_hunger := 100.0
 @export var max_thirst := 100.0
 @export var max_fatigue := 100.0
+@export var max_oxygen := 100.0
 
 var health := max_health
 var hunger := max_hunger
 var thirst := max_thirst
 var fatigue := max_fatigue
+var oxygen := max_oxygen
 
 # Harcama oranları
 @export var fatigue_idle_drain := 0.1
@@ -19,49 +24,70 @@ var fatigue := max_fatigue
 @export var fatigue_run_drain := 1.0
 @export var fatigue_jump_drain := 1.3
 @export var fatigue_crouch_drain := 0.25
+@export var oxygen_vacuum_drain := 0.0
 
-# Değer değişim hızları (her saniye)
+# Decay/recovery
 @export var hunger_decay_rate := 0.5
 @export var thirst_decay_rate := 0.7
-@export var fatigue_recovery_rate := 10
+@export var fatigue_recovery_rate := 10.0
+@export var oxygen_recovery_rate := 10.0
 
-# Durum güncellemesi
+# Çalışma flagleri
+var in_habitat := false  # gemi içi, oksijen takviyesi olan alan
+var oxygen_low_threshold := 0.15  # %15 altına düşerse "low" sinyali
+
+
 func _process(delta):
-	# Açlık ve susuzluk azalışı
-	hunger = max(hunger - hunger_decay_rate * delta, 0)
-	thirst = max(thirst - thirst_decay_rate * delta, 0)
-	
-	# Eğer açlık veya susuzluk sıfırsa sağlığı azalt
-	if hunger <= 0 or thirst <= 0:
-		health = max(health - 5.0 * delta, 0)
+	# Açlık / susuzluk
+	hunger = max(hunger - hunger_decay_rate * delta, 0.0)
+	thirst = max(thirst - thirst_decay_rate * delta, 0.0)
 
+	# Sağlık düşürme (açlık veya susuzluk kritikse)
+	if hunger <= 0.0 or thirst <= 0.0:
+		health = max(health - 5.0 * delta, 0.0)
+
+	# Oksijen: habitatta dol, dışarıdaysa pasif drain (opsiyonel)
+	if in_habitat:
+		if oxygen < max_oxygen:
+			oxygen = min(oxygen + oxygen_recovery_rate * delta, max_oxygen)
+	else:
+		if oxygen_vacuum_drain > 0.0:
+			oxygen = max(oxygen - oxygen_vacuum_drain * delta, 0.0)
+
+	# Oksijen bittiğinde sağlık azalabilir (isteğe göre ayarla)
+	if oxygen <= 0.0:
+		health = max(health - 10.0 * delta, 0.0)  # oksijen bittiğinde zarar
+
+	# Basit fatigue recovery (örnek: durunca geri dolar)
+	#if fatigue < max_fatigue:
+	#	fatigue = min(fatigue + fatigue_recovery_rate * delta, max_fatigue)
+
+
+# --- Fatigue / stamina API (senin mevcut fonksiyonları korudum)
 func apply_fatigue_drain(state, delta):
 	match state:
 		PlayerState.WALKING:
-			fatigue = max(fatigue - fatigue_walk_drain * delta, 0)
+			fatigue = max(fatigue - fatigue_walk_drain * delta, 0.0)
 		PlayerState.RUNNING:
-			fatigue = max(fatigue - fatigue_run_drain * delta, 0)
+			fatigue = max(fatigue - fatigue_run_drain * delta, 0.0)
 		PlayerState.CROUCHING:
-			fatigue = max(fatigue - fatigue_crouch_drain * delta, 0)
+			fatigue = max(fatigue - fatigue_crouch_drain * delta, 0.0)
 		PlayerState.JUMPING:
-			fatigue = max(fatigue - fatigue_jump_drain * delta, 0)
+			fatigue = max(fatigue - fatigue_jump_drain * delta, 0.0)
 		_:
 			pass
 
-# Genel değerleri diğer node’lara ya da UI’ya çekmek için getterler
 func get_health() -> float:
 	return health
-
 func get_hunger() -> float:
 	return hunger
-
 func get_thirst() -> float:
 	return thirst
-
 func get_fatigue() -> float:
 	return fatigue
+func get_oxygen() -> float:
+	return oxygen
 
-# Player hareketinden veya olaylardan tetiklenen değişiklikler
 func consume_food(amount: float):
 	hunger = min(hunger + amount, max_hunger)
 
@@ -69,7 +95,33 @@ func drink(amount: float):
 	thirst = min(thirst + amount, max_thirst)
 
 func use_fatigue(amount: float):
-	fatigue = max(fatigue - amount, 0)
+	fatigue = max(fatigue - amount, 0.0)
+
+# --- Oksijen API ---
+# amount: miktar (ör. thruster_oxygen_rate * delta)
+# döndürür: gerçekte kullanılan miktar (böylece Player kalan miktarı biliyor)
+func use_oxygen(amount: float) -> float:
+	if amount <= 0.0:
+		return 0.0
+	var used = min(amount, oxygen)
+	oxygen -= used
+	# sinyaller
+	if oxygen <= 0.0:
+		oxygen = 0.0
+		emit_signal("oxygen_depleted")
+	elif oxygen / max_oxygen <= oxygen_low_threshold:
+		emit_signal("oxygen_low", oxygen)
+	return used
+
+func can_consume_oxygen(amount: float) -> bool:
+	return oxygen >= amount
+
+func refill_oxygen(amount: float):
+	oxygen = min(oxygen + amount, max_oxygen)
+
+func set_in_habitat(enabled: bool):
+	in_habitat = enabled
+
 
 func _input(event):
 	# Fill health
