@@ -1,0 +1,42 @@
+[gd_scene load_steps=4 format=3 uid="uid://cmmywbr2dt87h"]
+
+[ext_resource type="Script" uid="uid://cqqdd0j4flgps" path="res://scenes/player/player.gd" id="1_wr5hl"]
+[ext_resource type="PackedScene" uid="uid://ctl0tnkew347e" path="res://scenes/player/Vitals.tscn" id="2_4kuee"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_x7p2l"]
+radius = 0.4
+height = 1.8
+
+[node name="Player" type="CharacterBody3D"]
+script = ExtResource("1_wr5hl")
+walk_speed = null
+run_speed = null
+gravity = null
+accel = null
+decel = null
+min_jump_force = null
+max_jump_force = null
+jump_hold_time = null
+crouch_height = null
+stand_height = null
+crouch_speed = null
+mouse_sens = null
+mouse_smooth = null
+max_sway_angle = null
+sway_speed = null
+
+[node name="Vitals" parent="." instance=ExtResource("2_4kuee")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, 0)
+shape = SubResource("CapsuleShape3D_x7p2l")
+
+[node name="Head" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.6, 0)
+
+[node name="Camera3D" type="Camera3D" parent="Head"]
+
+[node name="CeilingCheck" type="RayCast3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, 0)
+target_position = Vector3(0, 1, 0)

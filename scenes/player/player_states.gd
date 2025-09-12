@@ -1,0 +1,7 @@
+enum PlayerState {
+	IDLE,
+	WALKING,
+	RUNNING,
+	CROUCHING,
+	JUMPING
+}

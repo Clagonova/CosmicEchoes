@@ -1,0 +1,99 @@
+[gd_scene load_steps=14 format=3 uid="uid://6n0eof8k4mvo"]
+
+[ext_resource type="Texture2D" uid="uid://f7afpfqcu3pf" path="res://levels/prototype/textures/kenney_dark/texture_01.png" id="1_2mju7"]
+[ext_resource type="PackedScene" uid="uid://cmmywbr2dt87h" path="res://scenes/player/Player.tscn" id="1_7wkp4"]
+[ext_resource type="PackedScene" uid="uid://cqquqwxo2fj8b" path="res://levels/_skybox/starfield.tscn" id="1_dlgfo"]
+[ext_resource type="Shader" uid="uid://3vg5htbwy3jo" path="res://levels/_skybox/star_skybox.gdshader" id="1_wjmho"]
+[ext_resource type="PackedScene" uid="uid://dk2su158s043r" path="res://scenes/HUD/VitalsHUD.tscn" id="3_c6m2d"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_dlgfo"]
+render_priority = 0
+shader = ExtResource("1_wjmho")
+shader_parameter/star_density = 0.003
+shader_parameter/star_size = 0.05
+shader_parameter/twinkle_speed = 1.106
+
+[sub_resource type="SphereMesh" id="SphereMesh_c6m2d"]
+material = SubResource("ShaderMaterial_dlgfo")
+radius = 1000.0
+height = 2000.0
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_7wkp4"]
+sky_top_color = Color(0, 0, 0, 1)
+sky_horizon_color = Color(0, 0, 0, 1)
+ground_bottom_color = Color(0, 0, 0, 1)
+ground_horizon_color = Color(0, 0, 0, 1)
+
+[sub_resource type="Sky" id="Sky_2mju7"]
+sky_material = SubResource("ProceduralSkyMaterial_7wkp4")
+
+[sub_resource type="Environment" id="Environment_wjmho"]
+background_mode = 2
+sky = SubResource("Sky_2mju7")
+tonemap_mode = 2
+ssao_enabled = true
+sdfgi_enabled = true
+glow_enabled = true
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_wjmho"]
+albedo_texture = ExtResource("1_2mju7")
+metallic = 0.61
+metallic_specular = 0.36
+roughness = 0.55
+uv1_scale = Vector3(15, 10.005, 15)
+
+[sub_resource type="BoxMesh" id="BoxMesh_u3wkm"]
+lightmap_size_hint = Vector2i(104, 66)
+material = SubResource("StandardMaterial3D_wjmho")
+size = Vector3(10, 1, 10)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_7wkp4"]
+size = Vector3(10, 1, 10)
+
+[node name="PrototypeUniverse" type="Node3D"]
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(-0.847122, -0.161563, 0.506243, 0.0457047, 0.92698, 0.372317, -0.52943, 0.338535, -0.77788, 0, 0, 0)
+light_color = Color(1, 0.985, 0.95, 1)
+light_energy = 1.15
+shadow_enabled = true
+shadow_blur = 0.8
+
+[node name="Starfield" parent="." instance=ExtResource("1_dlgfo")]
+max_size = 70.0
+
+[node name="Skybox" type="MeshInstance3D" parent="."]
+visible = false
+cast_shadow = 0
+mesh = SubResource("SphereMesh_c6m2d")
+skeleton = NodePath("../WorldEnvironment")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_wjmho")
+
+[node name="VitalsHUD" parent="." instance=ExtResource("3_c6m2d")]
+vitals_path = NodePath("../Player")
+
+[node name="Platforms" type="Node3D" parent="."]
+
+[node name="Floor2" type="MeshInstance3D" parent="Platforms"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8, 2.42291, 0)
+mesh = SubResource("BoxMesh_u3wkm")
+skeleton = NodePath("../Floor")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Platforms/Floor2"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Platforms/Floor2/StaticBody3D"]
+shape = SubResource("BoxShape3D_7wkp4")
+
+[node name="Floor" type="MeshInstance3D" parent="Platforms"]
+mesh = SubResource("BoxMesh_u3wkm")
+skeleton = NodePath("../..")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Platforms/Floor"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Platforms/Floor/StaticBody3D"]
+shape = SubResource("BoxShape3D_7wkp4")
+
+[node name="Player" parent="." instance=ExtResource("1_7wkp4")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.204841, 1.13644, 1.83256)
