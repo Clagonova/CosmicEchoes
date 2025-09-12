@@ -60,7 +60,6 @@ shadow_enabled = true
 shadow_blur = 0.8
 
 [node name="Starfield" parent="." instance=ExtResource("1_dlgfo")]
-max_size = 70.0
 
 [node name="Skybox" type="MeshInstance3D" parent="."]
 visible = false
