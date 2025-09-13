@@ -114,21 +114,9 @@ func _physics_process(delta):
 		else:
 			state = PlayerState.IDLE
 
-	# --- VITALS drain ---
-	if state == PlayerState.ZEROG:
-		# ZeroG hareket
-		if moving:
-			var oxygen_used = vitals.use_oxygen(thruster_oxygen_rate * delta)
-			if oxygen_used > 0.0:
-				# oksijen varsa hareket uygula
-				velocity += direction * thruster_force * delta
-			# oksijen yoksa: sadece sürüklenmeye devam (velocity korunuyor)
-	else:
-		vitals.apply_fatigue_drain(state, delta)
-
 	# --- MOVEMENT & VITALS DRAIN ---
 	if state == PlayerState.ZEROG:
-		# --- ZERO-G MOVEMENT ---
+		# --- ZERO-G MOVEMENT & OXYGEN DRAIN ---
 		var thrust_input = Vector3.ZERO
 		thrust_input += direction
 		if Input.is_action_pressed("jump"): # yukarı
@@ -149,11 +137,11 @@ func _physics_process(delta):
 				pass
 		else:
 			# input yoksa velocity kademeli olarak düşer
-			velocity = lerp(velocity, Vector3.ZERO, delta * 0.5)
+			velocity = lerp(velocity, Vector3.ZERO, delta * 0.3)
 	else:
 		vitals.apply_fatigue_drain(state, delta)
 		
-		# --- NORMAL MOVEMENT ---
+		# --- NORMAL MOVEMENT & FALL DAMAGE ---
 		var speed = walk_speed
 		match state:
 			PlayerState.RUNNING:

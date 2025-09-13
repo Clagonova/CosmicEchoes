@@ -2,6 +2,8 @@ extends Node3D
 
 const PlayerState = preload("res://scenes/player/player_states.gd").PlayerState
 
+@onready var player: CharacterBody3D = $".."
+
 signal oxygen_depleted
 signal oxygen_low(new_value: float)
 
@@ -27,10 +29,10 @@ var oxygen := max_oxygen
 # Decay/recovery
 @export var hunger_decay_rate := 0.5
 @export var fatigue_recovery_rate := 10.0
-@export var oxygen_recovery_rate := 10.0
+@export var oxygen_recovery_rate := 15.0
 
 # Çalışma flagleri
-var in_habitat := false  # gemi içi, oksijen takviyesi olan alan
+var in_habitat := false  # gemi içi/planetary, oksijen değerleri olan alan
 var oxygen_low_threshold := 0.15  # %15 altına düşerse "low" sinyali
 
 
@@ -42,8 +44,7 @@ func _process(delta):
 	if hunger <= 0.0:
 		health = max(health - 5.0 * delta, 0.0)
 
-	# Oksijen: habitatta dol, dışarıdaysa pasif drain (opsiyonel)
-	if in_habitat:
+	if player.state != PlayerState.ZEROG: #/if in_habitat:
 		if oxygen < max_oxygen:
 			oxygen = min(oxygen + oxygen_recovery_rate * delta, max_oxygen)
 	else:
