@@ -8,27 +8,24 @@ signal oxygen_low(new_value: float)
 # --- Temel hayatta kalma değerleri
 @export var max_health := 100.0
 @export var max_hunger := 100.0
-@export var max_thirst := 100.0
 @export var max_fatigue := 100.0
 @export var max_oxygen := 100.0
 
 var health := max_health
 var hunger := max_hunger
-var thirst := max_thirst
 var fatigue := max_fatigue
 var oxygen := max_oxygen
 
 # Harcama oranları
-@export var fatigue_idle_drain := 0.1
-@export var fatigue_walk_drain := 0.3
-@export var fatigue_run_drain := 1.0
-@export var fatigue_jump_drain := 1.3
-@export var fatigue_crouch_drain := 0.25
+@export var fatigue_idle_drain := 0.05
+@export var fatigue_crouch_drain := 0.
+@export var fatigue_walk_drain := 0.15
+@export var fatigue_run_drain := 0.5
+@export var fatigue_jump_drain := 0.75
 @export var oxygen_vacuum_drain := 0.1
 
 # Decay/recovery
 @export var hunger_decay_rate := 0.5
-@export var thirst_decay_rate := 0.7
 @export var fatigue_recovery_rate := 10.0
 @export var oxygen_recovery_rate := 10.0
 
@@ -38,12 +35,11 @@ var oxygen_low_threshold := 0.15  # %15 altına düşerse "low" sinyali
 
 
 func _process(delta):
-	# Açlık / susuzluk
+	# Açlık
 	hunger = max(hunger - hunger_decay_rate * delta, 0.0)
-	thirst = max(thirst - thirst_decay_rate * delta, 0.0)
 
 	# Sağlık düşürme (açlık veya susuzluk kritikse)
-	if hunger <= 0.0 or thirst <= 0.0:
+	if hunger <= 0.0:
 		health = max(health - 5.0 * delta, 0.0)
 
 	# Oksijen: habitatta dol, dışarıdaysa pasif drain (opsiyonel)
@@ -81,8 +77,6 @@ func get_health() -> float:
 	return health
 func get_hunger() -> float:
 	return hunger
-func get_thirst() -> float:
-	return thirst
 func get_fatigue() -> float:
 	return fatigue
 func get_oxygen() -> float:
@@ -90,9 +84,6 @@ func get_oxygen() -> float:
 
 func consume_food(amount: float):
 	hunger = min(hunger + amount, max_hunger)
-
-func drink(amount: float):
-	thirst = min(thirst + amount, max_thirst)
 
 func use_fatigue(amount: float):
 	fatigue = max(fatigue - amount, 0.0)
@@ -132,10 +123,6 @@ func _input(event):
 	if event.is_action_pressed("debug_fill_hunger"):
 		hunger = min(hunger + 100, max_hunger)
 		print("Cheat: Hunger Filled.")
-	# Fill thirst
-	if event.is_action_pressed("debug_fill_thirst"):
-		thirst = min(thirst + 100, max_thirst)
-		print("Cheat: Thirst Filled.")
 	# Fill fatigue
 	if event.is_action_pressed("debug_fill_fatigue"):
 		fatigue = min(fatigue + 100, max_fatigue)

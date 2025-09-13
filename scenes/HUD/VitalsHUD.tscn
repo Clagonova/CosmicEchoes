@@ -1,9 +1,9 @@
-[gd_scene load_steps=17 format=3 uid="uid://dk2su158s043r"]
+[gd_scene load_steps=14 format=3 uid="uid://dk2su158s043r"]
 
 [ext_resource type="Script" uid="uid://yvpwhl2trv6t" path="res://scenes/HUD/vitals_hud.gd" id="1_putkd"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hff5w"]
-bg_color = Color(0, 0, 0, 0.196078)
+bg_color = Color(0, 0, 0, 0.117647)
 border_width_left = 2
 border_width_top = 2
 border_width_right = 2
@@ -15,7 +15,7 @@ corner_radius_bottom_right = 3
 corner_radius_bottom_left = 3
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_vmayo"]
-bg_color = Color(0.81, 0.20115, 0.1458, 0.666667)
+bg_color = Color(0.81, 0.20115, 0.1458, 0.588235)
 corner_radius_top_left = 3
 corner_radius_top_right = 3
 corner_radius_bottom_right = 3
@@ -28,7 +28,7 @@ ProgressBar/styles/background = SubResource("StyleBoxFlat_hff5w")
 ProgressBar/styles/fill = SubResource("StyleBoxFlat_vmayo")
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_putkd"]
-bg_color = Color(0, 0, 0, 0.196078)
+bg_color = Color(0, 0, 0, 0.117647)
 border_width_left = 2
 border_width_top = 2
 border_width_right = 2
@@ -40,7 +40,7 @@ corner_radius_bottom_right = 3
 corner_radius_bottom_left = 3
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_atal1"]
-bg_color = Color(0.277067, 0.8, 0.208, 0.666667)
+bg_color = Color(0.277067, 0.8, 0.208, 0.588235)
 corner_radius_top_left = 3
 corner_radius_top_right = 3
 corner_radius_bottom_right = 3
@@ -52,33 +52,8 @@ ProgressBar/font_sizes/font_size = 12
 ProgressBar/styles/background = SubResource("StyleBoxFlat_putkd")
 ProgressBar/styles/fill = SubResource("StyleBoxFlat_atal1")
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_rxgtw"]
-bg_color = Color(0, 0, 0, 0.196078)
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
-border_color = Color(1, 1, 1, 0.0627451)
-corner_radius_top_left = 3
-corner_radius_top_right = 3
-corner_radius_bottom_right = 3
-corner_radius_bottom_left = 3
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_1ludm"]
-bg_color = Color(0.2548, 0.641573, 0.98, 0.666667)
-corner_radius_top_left = 3
-corner_radius_top_right = 3
-corner_radius_bottom_right = 3
-corner_radius_bottom_left = 3
-
-[sub_resource type="Theme" id="Theme_ep46x"]
-ProgressBar/constants/outline_size = 4
-ProgressBar/font_sizes/font_size = 12
-ProgressBar/styles/background = SubResource("StyleBoxFlat_rxgtw")
-ProgressBar/styles/fill = SubResource("StyleBoxFlat_1ludm")
-
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_o540l"]
-bg_color = Color(0, 0, 0, 0.196078)
+bg_color = Color(0, 0, 0, 0.117647)
 border_width_left = 2
 border_width_top = 2
 border_width_right = 2
@@ -90,7 +65,7 @@ corner_radius_bottom_right = 3
 corner_radius_bottom_left = 3
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_lysyk"]
-bg_color = Color(0.87, 0.58348, 0.2088, 0.666667)
+bg_color = Color(0.94, 0.618207, 0.1974, 0.588235)
 corner_radius_top_left = 3
 corner_radius_top_right = 3
 corner_radius_bottom_right = 3
@@ -103,7 +78,7 @@ ProgressBar/styles/background = SubResource("StyleBoxFlat_o540l")
 ProgressBar/styles/fill = SubResource("StyleBoxFlat_lysyk")
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ep46x"]
-bg_color = Color(0, 0, 0, 0.196078)
+bg_color = Color(0, 0, 0, 0.117647)
 border_width_left = 2
 border_width_top = 2
 border_width_right = 2
@@ -115,7 +90,7 @@ corner_radius_bottom_right = 3
 corner_radius_bottom_left = 3
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_4b0k3"]
-bg_color = Color(0.87, 0.87, 0.87, 0.666667)
+bg_color = Color(0.87, 0.87, 0.87, 0.588235)
 corner_radius_top_left = 3
 corner_radius_top_right = 3
 corner_radius_bottom_right = 3
@@ -135,7 +110,7 @@ anchors_preset = 2
 anchor_top = 1.0
 anchor_bottom = 1.0
 offset_left = 27.0
-offset_top = -119.0
+offset_top = -92.0
 offset_right = 199.0
 offset_bottom = -23.0
 grow_vertical = 0
@@ -153,12 +128,6 @@ layout_mode = 2
 theme = SubResource("Theme_hff5w")
 value = 100.0
 
-[node name="ThirstBar" type="ProgressBar" parent="Vitals"]
-unique_name_in_owner = true
-layout_mode = 2
-theme = SubResource("Theme_ep46x")
-value = 100.0
-
 [node name="FatigueBar" type="ProgressBar" parent="Vitals"]
 unique_name_in_owner = true
 layout_mode = 2
@@ -171,9 +140,9 @@ anchors_preset = 2
 anchor_top = 1.0
 anchor_bottom = 1.0
 offset_left = 202.0
-offset_top = -119.0
-offset_right = 256.0
-offset_bottom = -26.0
+offset_top = -92.0
+offset_right = 245.0
+offset_bottom = -23.0
 grow_vertical = 0
 theme = SubResource("Theme_ys8b8")
 value = 100.0

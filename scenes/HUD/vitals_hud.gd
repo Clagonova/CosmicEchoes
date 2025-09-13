@@ -5,7 +5,6 @@ var vitals
 
 @onready var health_bar: ProgressBar = %HealthBar
 @onready var hunger_bar: ProgressBar = %HungerBar
-@onready var thirst_bar: ProgressBar = %ThirstBar
 @onready var fatigue_bar: ProgressBar = %FatigueBar
 @onready var oxygen_bar: ProgressBar = %OxygenBar
 
@@ -22,6 +21,5 @@ func _process(_delta):
 	# Değerleri güncelle
 	health_bar.value = vitals.get_health()
 	hunger_bar.value = vitals.get_hunger()
-	thirst_bar.value = vitals.get_thirst()
 	fatigue_bar.value = vitals.get_fatigue()
 	oxygen_bar.value = vitals.get_oxygen()
