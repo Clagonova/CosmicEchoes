@@ -82,9 +82,6 @@ func get_fatigue() -> float:
 func get_oxygen() -> float:
 	return oxygen
 
-func damage_health(amount: float, delta):
-	health = max(health - amount * delta, 0.0)
-
 func consume_food(amount: float):
 	hunger = min(hunger + amount, max_hunger)
 

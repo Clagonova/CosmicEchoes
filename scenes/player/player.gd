@@ -56,8 +56,6 @@ var sway_pitch := 0.0
 
 var jumping := false
 var jump_timer := 0.0
-var falling_start_y := 0.0
-var is_falling := false
 
 var state := PlayerState.IDLE
 
@@ -99,14 +97,7 @@ func _physics_process(delta):
 		state = PlayerState.ZEROG
 	else:
 		if not is_on_floor():
-			if velocity_y < 0: # düşüyorsa
-				if not is_falling:
-					is_falling = true
-					falling_start_y = global_transform.origin.y
-				if not PlayerState.FALLING:
-					state = PlayerState.FALLING
-			else:
-				state = PlayerState.JUMPING
+			state = PlayerState.JUMPING
 		elif crouch_pressed or ceiling_check.is_colliding():
 			state = PlayerState.CROUCHING
 		elif moving:
@@ -166,31 +157,20 @@ func _physics_process(delta):
 		velocity.z = lerp(velocity.z, target_velocity.z, accel * delta if moving else decel * delta)
 
 		if is_on_floor():
-			if is_falling:
-				var fall_distance = falling_start_y - global_transform.origin.y
-				if fall_distance > 3.0: # minimum mesafe
-					var fall_damage = (fall_distance - 3.0) * 10.0
-					vitals.damage_health(fall_damage, 1.0)
-				is_falling = false
-
 			velocity_y = 0.0
 			jumping = false
 			jump_timer = 0.0
-
 			if Input.is_action_just_pressed("jump") and state != PlayerState.CROUCHING:
 				velocity_y = min_jump_force
 				jumping = true
 		else:
 			velocity_y -= gravity * delta
 
-		if jumping:
-			if Input.is_action_pressed("jump") and jump_timer < jump_hold_time:
-				var t = jump_timer / jump_hold_time
-				var extra_force = lerp(min_jump_force, max_jump_force, t)
-				velocity_y = extra_force
-				jump_timer += delta
-			else:
-				jumping = false
+		if jumping and Input.is_action_pressed("jump") and jump_timer < jump_hold_time:
+			var t = jump_timer / jump_hold_time
+			var extra_force = lerp(min_jump_force, max_jump_force, t)
+			velocity_y = extra_force
+			jump_timer += delta
 
 		velocity.y = velocity_y
 
