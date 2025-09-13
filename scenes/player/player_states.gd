@@ -4,5 +4,6 @@ enum PlayerState {
 	RUNNING,
 	CROUCHING,
 	JUMPING,
+	FALLING,
 	ZEROG
 }
