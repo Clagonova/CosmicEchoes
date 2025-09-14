@@ -45,7 +45,7 @@ var camera
 var collision_shape
 var ceiling_check
 var current_height := 0.0
-var is_in_space := true  # ileride gravity system ile değişecek
+var is_in_space := false  # ileride gravity system ile değişecek
 
 var yaw := 0.0
 var pitch := 0.0
@@ -61,6 +61,12 @@ var is_falling := false
 
 var state := PlayerState.IDLE
 
+func _on_portal_entered(_player) -> void:
+	is_in_space = false
+
+func _on_portal_exited(_player) -> void:
+	is_in_space = true
+
 func _ready():
 	head = $Head
 	camera = $Head/Camera3D
@@ -74,6 +80,7 @@ func _unhandled_input(event):
 		target_yaw -= deg_to_rad(event.relative.x * mouse_sens)
 		target_pitch -= deg_to_rad(event.relative.y * mouse_sens)
 		target_pitch = clamp(target_pitch, deg_to_rad(-89), deg_to_rad(89))
+
 
 func _process(_delta):
 	# Mouse look smoothing
@@ -137,7 +144,7 @@ func _physics_process(delta):
 				pass
 		else:
 			# input yoksa velocity kademeli olarak düşer
-			velocity = lerp(velocity, Vector3.ZERO, delta * 0.3)
+			velocity = lerp(velocity, Vector3.ZERO, delta * 0.4)
 	else:
 		vitals.apply_fatigue_drain(state, delta)
 		

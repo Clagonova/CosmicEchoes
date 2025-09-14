@@ -1,10 +1,12 @@
 [gd_scene load_steps=14 format=3 uid="uid://6n0eof8k4mvo"]
 
-[ext_resource type="Texture2D" uid="uid://f7afpfqcu3pf" path="res://levels/prototype/textures/kenney_dark/texture_01.png" id="1_2mju7"]
 [ext_resource type="PackedScene" uid="uid://cmmywbr2dt87h" path="res://scenes/player/Player.tscn" id="1_7wkp4"]
 [ext_resource type="PackedScene" uid="uid://cqquqwxo2fj8b" path="res://levels/_skybox/starfield.tscn" id="1_dlgfo"]
 [ext_resource type="Shader" uid="uid://3vg5htbwy3jo" path="res://levels/_skybox/star_skybox.gdshader" id="1_wjmho"]
 [ext_resource type="PackedScene" uid="uid://dk2su158s043r" path="res://scenes/HUD/VitalsHUD.tscn" id="3_c6m2d"]
+[ext_resource type="PackedScene" uid="uid://cfcot56qhnd1" path="res://scenes/gravity/gravity_portal.tscn" id="6_bhdgs"]
+[ext_resource type="Material" uid="uid://dy33g0ov2rhu" path="res://levels/prototype/materials/prototype_grid_dark.tres" id="6_of0s4"]
+[ext_resource type="Material" uid="uid://csqe6kmrrvhdh" path="res://levels/prototype/materials/prototype_grid_green.tres" id="7_of0s4"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_dlgfo"]
 render_priority = 0
@@ -35,20 +37,9 @@ ssao_enabled = true
 sdfgi_enabled = true
 glow_enabled = true
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_wjmho"]
-albedo_texture = ExtResource("1_2mju7")
-metallic = 0.61
-metallic_specular = 0.36
-roughness = 0.55
-uv1_scale = Vector3(15, 10.005, 15)
-
-[sub_resource type="BoxMesh" id="BoxMesh_u3wkm"]
-lightmap_size_hint = Vector2i(104, 66)
-material = SubResource("StandardMaterial3D_wjmho")
-size = Vector3(10, 1, 10)
-
-[sub_resource type="BoxShape3D" id="BoxShape3D_7wkp4"]
-size = Vector3(10, 1, 10)
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_of0s4"]
+transparency = 1
+albedo_color = Color(0.14, 0.14, 0.14, 0.372549)
 
 [node name="PrototypeUniverse" type="Node3D"]
 
@@ -73,26 +64,66 @@ environment = SubResource("Environment_wjmho")
 [node name="VitalsHUD" parent="." instance=ExtResource("3_c6m2d")]
 vitals_path = NodePath("../Player")
 
-[node name="Platforms" type="Node3D" parent="."]
-
-[node name="Floor2" type="MeshInstance3D" parent="Platforms"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8, 2.42291, 0)
-mesh = SubResource("BoxMesh_u3wkm")
-skeleton = NodePath("../Floor")
-
-[node name="StaticBody3D" type="StaticBody3D" parent="Platforms/Floor2"]
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Platforms/Floor2/StaticBody3D"]
-shape = SubResource("BoxShape3D_7wkp4")
-
-[node name="Floor" type="MeshInstance3D" parent="Platforms"]
-mesh = SubResource("BoxMesh_u3wkm")
-skeleton = NodePath("../..")
-
-[node name="StaticBody3D" type="StaticBody3D" parent="Platforms/Floor"]
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Platforms/Floor/StaticBody3D"]
-shape = SubResource("BoxShape3D_7wkp4")
-
 [node name="Player" parent="." instance=ExtResource("1_7wkp4")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.204841, 1.13644, 1.83256)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.205, 0.41072, 1.833)
+
+[node name="PrototypeStation" type="Node" parent="."]
+
+[node name="GravityPortal" parent="PrototypeStation" instance=ExtResource("6_bhdgs")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 1.75, -4.75)
+collision_size = Vector3(4, 3.5, 0.5)
+
+[node name="Lights" type="Node" parent="PrototypeStation"]
+
+[node name="OmniLight3DBlue" type="OmniLight3D" parent="PrototypeStation/Lights"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.03711, 2.21614, -1.179)
+light_color = Color(0.5915, 0.57, 1, 1)
+omni_range = 8.8
+
+[node name="OmniLight3DGreen" type="OmniLight3D" parent="PrototypeStation/Lights"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.10066, 2.21614, 1.874)
+light_color = Color(0.57, 1, 0.670333, 1)
+omni_range = 8.8
+
+[node name="CSGCombiner3D" type="CSGCombiner3D" parent="PrototypeStation"]
+use_collision = true
+
+[node name="Window" type="CSGBox3D" parent="PrototypeStation/CSGCombiner3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.0167236, 2, 4.75)
+size = Vector3(7.96387, 2.98438, 0.244141)
+material = SubResource("StandardMaterial3D_of0s4")
+
+[node name="StationExterior" type="CSGBox3D" parent="PrototypeStation/CSGCombiner3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, 0)
+size = Vector3(10, 5, 10)
+material = ExtResource("6_of0s4")
+
+[node name="Interior" type="CSGBox3D" parent="PrototypeStation/CSGCombiner3D/StationExterior"]
+operation = 2
+size = Vector3(9, 4, 9)
+material = ExtResource("6_of0s4")
+
+[node name="EntranceCutout" type="CSGBox3D" parent="PrototypeStation/CSGCombiner3D/StationExterior"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, -0.25, -4.75)
+operation = 2
+size = Vector3(4, 3.5, 0.5)
+material = ExtResource("6_of0s4")
+
+[node name="WindowCutout" type="CSGBox3D" parent="PrototypeStation/CSGCombiner3D/StationExterior"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 4.75)
+operation = 2
+size = Vector3(8, 3, 0.5)
+material = ExtResource("6_of0s4")
+
+[node name="PlatformMedium" type="CSGBox3D" parent="PrototypeStation/CSGCombiner3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 0.5, -0.5)
+size = Vector3(1, 1, 3)
+material = ExtResource("7_of0s4")
+
+[node name="RampShort" type="CSGPolygon3D" parent="PrototypeStation/CSGCombiner3D/PlatformMedium"]
+transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 0.5, -0.5, 2.5)
+polygon = PackedVector2Array(-0.5, 0, -0.5, 0, 1, 1, 1, 0)
+material = ExtResource("7_of0s4")
+
+[connection signal="entered_gravity_zone" from="PrototypeStation/GravityPortal" to="Player" method="_on_portal_entered"]
+[connection signal="exited_gravity_zone" from="PrototypeStation/GravityPortal" to="Player" method="_on_portal_exited"]

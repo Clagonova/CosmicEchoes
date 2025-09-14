@@ -20,14 +20,14 @@ var oxygen := max_oxygen
 
 # Harcama oranları
 @export var fatigue_idle_drain := 0.05
-@export var fatigue_crouch_drain := 0.
+@export var fatigue_crouch_drain := 0.1
 @export var fatigue_walk_drain := 0.15
 @export var fatigue_run_drain := 0.5
 @export var fatigue_jump_drain := 0.75
 @export var oxygen_vacuum_drain := 0.1
 
 # Decay/recovery
-@export var hunger_decay_rate := 0.5
+@export var hunger_decay_rate := 0.05
 @export var fatigue_recovery_rate := 10.0
 @export var oxygen_recovery_rate := 15.0
 
