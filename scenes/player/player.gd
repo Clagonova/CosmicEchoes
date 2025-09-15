@@ -3,6 +3,8 @@ extends CharacterBody3D
 const PlayerState = preload("res://scenes/player/player_states.gd").PlayerState
 
 @onready var vitals: Node3D = $Vitals
+@onready var head: Node3D = %Head
+@onready var camera: Camera3D = %Camera3D
 
 # --- Movement ---
 @export var walk_speed := 4.0
@@ -35,12 +37,10 @@ const PlayerState = preload("res://scenes/player/player_states.gd").PlayerState
 
 # --- Internal ---
 var velocity_y := 0.0
-var head
-var camera
 var collision_shape
 var ceiling_check
 var current_height := 0.0
-var is_in_space := false  # ileride gravity system ile değişecek
+var is_in_space := false  # Will be changed with gravity system later
 
 var yaw := 0.0
 var pitch := 0.0
@@ -55,31 +55,11 @@ var is_falling := false
 var state := PlayerState.IDLE
 
 
-# --- READY ---
 func _ready():
-	head = $Head
-	camera = $Head/Camera3D
 	collision_shape = $CollisionShape3D
 	ceiling_check = $CeilingCheck
 	current_height = stand_height
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
-
-
-# --- INPUT ---
-func _unhandled_input(event):
-	if event is InputEventMouseMotion:
-		target_yaw -= deg_to_rad(event.relative.x * mouse_sens)
-		target_pitch -= deg_to_rad(event.relative.y * mouse_sens)
-		target_pitch = clamp(target_pitch, deg_to_rad(-89), deg_to_rad(89))
-
-
-# --- PROCESS ---
-func _process(_delta):
-	# Mouse look smoothing
-	yaw = lerp(yaw, target_yaw, mouse_smooth)
-	pitch = lerp(pitch, target_pitch, mouse_smooth)
-	rotation.y = yaw
-	head.rotation.x = pitch
 
 
 # --- PHYSICS ---
@@ -100,14 +80,31 @@ func _physics_process(delta):
 		handle_jump(input, delta)
 		update_crouch_height(delta)
 
+	applyCamSmoothing(delta)
 	move_and_slide()
 
+
+# --- INPUT ---
+func _unhandled_input(event):
+	if event is InputEventMouseMotion:
+		target_yaw -= deg_to_rad(event.relative.x * mouse_sens)
+		target_pitch -= deg_to_rad(event.relative.y * mouse_sens)
+		target_pitch = clamp(target_pitch, deg_to_rad(-89), deg_to_rad(89))
+	
+	if Input.is_action_just_pressed("quit"):
+		get_tree().quit()
+
+# --- MOUSE LOOK SMOOTHING ---
+func applyCamSmoothing(_delta) -> void:
+	yaw = lerp(yaw, target_yaw, mouse_smooth)
+	pitch = lerp(pitch, target_pitch, mouse_smooth)
+	rotation.y = yaw
+	head.rotation.x = pitch
 
 # --- INPUT HANDLING ---
 func handle_input() -> Dictionary:
 	var input_dir = Input.get_vector("move_left", "move_right", "move_forward", "move_back")
 	
-	# --- Kamera yönüne göre yön ---
 	var cam_forward = head.global_transform.basis.z
 	cam_forward.y = 0
 	cam_forward = cam_forward.normalized()
@@ -128,7 +125,7 @@ func handle_input() -> Dictionary:
 	}
 
 
-
+# --- PLAYER STATES ---
 func determine_state(input: Dictionary) -> PlayerState:
 	if is_in_space:
 		return PlayerState.ZEROG
@@ -148,8 +145,9 @@ func determine_state(input: Dictionary) -> PlayerState:
 		return PlayerState.IDLE
 
 
+# --- ZERO-G MOVEMENT ---
 func handle_zero_g(input: Dictionary, delta: float):
-	# Kamera yönleri
+	# Camera angles
 	var forward_dir = -head.global_transform.basis.z
 	var right_dir = head.global_transform.basis.x
 	var up_dir = Vector3.UP
@@ -160,12 +158,8 @@ func handle_zero_g(input: Dictionary, delta: float):
 	thrust -= forward_dir * (1 if Input.is_action_pressed("move_back") else 0)
 	thrust += right_dir * (1 if Input.is_action_pressed("move_right") else 0)
 	thrust -= right_dir * (1 if Input.is_action_pressed("move_left") else 0)
-
-	# Yükselme/alçalma tuşları
-	if Input.is_action_pressed("jump"):
-		thrust += up_dir
-	if Input.is_action_pressed("crouch"):
-		thrust -= up_dir
+	thrust += up_dir * (1 if Input.is_action_pressed("jump") else 0)
+	thrust -= up_dir * (1 if Input.is_action_pressed("crouch") else 0)
 
 	var sprinting = input["sprint"]
 	var speed = thruster_boost_force if sprinting else thruster_force
@@ -174,29 +168,21 @@ func handle_zero_g(input: Dictionary, delta: float):
 	if thrust.length() > 0.01:
 		var oxygen_used = vitals.use_oxygen(oxygen_needed)
 		if oxygen_used > 0.0:
-			# Hedef velocity ve momentum
+			# Target velocity and momentum
 			var target_velocity = thrust.normalized() * speed
 			velocity = velocity.lerp(target_velocity, delta * 3.5)
-
-			# Smooth rotation
-			var target_yaw_dir = Vector3(velocity.x, 0, velocity.z)
-			if target_yaw_dir.length() > 0.01:
-				var target_yaw_angle = atan2(-target_yaw_dir.x, -target_yaw_dir.z)
-				var rotation_speed = 5.0
-				if sprinting:
-					rotation_speed *= 1.5
-				rotation.y = lerp_angle(rotation.y, target_yaw_angle, delta * rotation_speed)
 	else:
-		# Drift: momentum korunuyor ama yavaş yavaş sürtünme ile azalıyor
-		var friction = 0.85  # daha düşük = daha hızlı yavaşlar
+		# Drift: keeps the momentum but it decays over time
+		var friction = 0.85  # smaller = slows faster
 		velocity *= pow(friction, delta * 2.5)
 
-	# --- Hız limiti ---
+	# Speed limit
 	var max_speed = thruster_boost_force if sprinting else thruster_force
 	if velocity.length() > max_speed:
 		velocity = velocity.normalized() * max_speed
 
 
+# --- NORMAL MOVEMENT ---
 func handle_movement(input: Dictionary, delta: float):
 	var speed = walk_speed
 	match state:
@@ -237,7 +223,7 @@ func handle_jump(input: Dictionary, delta: float):
 
 func handle_fall_damage():
 	var fall_distance = falling_start_y - global_transform.origin.y
-	if fall_distance > 3.0: # minimum mesafe
+	if fall_distance > 3.0: # Min distance
 		var fall_damage = (fall_distance - 3.0) * 10.0
 		vitals.damage_health(fall_damage, 1.0)
 	is_falling = false
