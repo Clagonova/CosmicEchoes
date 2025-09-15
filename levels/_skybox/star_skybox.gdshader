@@ -17,7 +17,7 @@ void fragment() {
     vec3 dir = normalize(VERTEX); // Sphere yönü
 
     // --- Yıldızlar ---
-    vec2 uv = dir.xy * 123.456; 
+    vec2 uv = dir.xy * 123.456;
     float r = rand(uv);
     float brightness = step(1.0 - star_density, r);
     float twinkle = sin(TIME * twinkle_speed + r * 10.0) * 0.5 + 0.5;
@@ -26,7 +26,7 @@ void fragment() {
     // Rastgele renkli yıldızlar
     vec3 star_color = vec3(rand(uv), rand(uv + 1.0), rand(uv + 2.0));
     vec3 final_star = star_color * brightness;
-     
+
     ALBEDO = final_star;
     ALPHA = 1.0;
 }

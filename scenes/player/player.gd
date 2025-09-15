@@ -4,19 +4,20 @@ const PlayerState = preload("res://scenes/player/player_states.gd").PlayerState
 
 @onready var vitals: Node3D = $Vitals
 @onready var head: Node3D = %Head
-@onready var camera: Camera3D = %Camera3D
 
 # --- Movement ---
 @export var walk_speed := 4.0
-@export var run_speed := 7.0
+@export var run_speed := 6.5
 @export var gravity := 12.0
 @export var accel := 8.0
 @export var decel := 10.0
+@export var air_control := 0.5
 
 # --- Jump ---
 @export var min_jump_force := 2.0
 @export var max_jump_force := 3.0
 @export var jump_hold_time := 0.2
+@export var coyote_time := 0.15
 
 # --- Crouch ---
 @export var crouch_height := 0.9
@@ -40,7 +41,7 @@ var velocity_y := 0.0
 var collision_shape
 var ceiling_check
 var current_height := 0.0
-var is_in_space := false  # Will be changed with gravity system later
+var is_in_space := false
 
 var yaw := 0.0
 var pitch := 0.0
@@ -51,6 +52,7 @@ var jumping := false
 var jump_timer := 0.0
 var falling_start_y := 0.0
 var is_falling := false
+var coyote_timer := 0.0
 
 var state := PlayerState.IDLE
 
@@ -62,13 +64,8 @@ func _ready():
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 
 
-# --- PHYSICS ---
 func _physics_process(delta):
 	var input = handle_input()
-
-	# Debug toggle
-	if Input.is_action_just_pressed("debug_switch_gravity"):
-		is_in_space = not is_in_space
 
 	state = determine_state(input)
 
@@ -84,7 +81,6 @@ func _physics_process(delta):
 	move_and_slide()
 
 
-# --- INPUT ---
 func _unhandled_input(event):
 	if event is InputEventMouseMotion:
 		target_yaw -= deg_to_rad(event.relative.x * mouse_sens)
@@ -94,14 +90,14 @@ func _unhandled_input(event):
 	if Input.is_action_just_pressed("quit"):
 		get_tree().quit()
 
-# --- MOUSE LOOK SMOOTHING ---
+
 func applyCamSmoothing(_delta) -> void:
 	yaw = lerp(yaw, target_yaw, mouse_smooth)
 	pitch = lerp(pitch, target_pitch, mouse_smooth)
 	rotation.y = yaw
 	head.rotation.x = pitch
 
-# --- INPUT HANDLING ---
+
 func handle_input() -> Dictionary:
 	var input_dir = Input.get_vector("move_left", "move_right", "move_forward", "move_back")
 	
@@ -125,19 +121,18 @@ func handle_input() -> Dictionary:
 	}
 
 
-# --- PLAYER STATES ---
 func determine_state(input: Dictionary) -> PlayerState:
 	if is_in_space:
 		return PlayerState.ZEROG
 	if not is_on_floor():
-		if velocity_y < 0:
+		if velocity_y < 0 or ceiling_check.is_colliding():
 			if not is_falling:
 				is_falling = true
 				falling_start_y = global_transform.origin.y
 			return PlayerState.FALLING
 		else:
 			return PlayerState.JUMPING
-	elif input["crouch"] or ceiling_check.is_colliding():
+	elif input["crouch"] or (ceiling_check.is_colliding() and is_on_floor()):
 		return PlayerState.CROUCHING
 	elif input["moving"]:
 		return PlayerState.RUNNING if input["sprint"] else PlayerState.WALKING
@@ -147,12 +142,10 @@ func determine_state(input: Dictionary) -> PlayerState:
 
 # --- ZERO-G MOVEMENT ---
 func handle_zero_g(input: Dictionary, delta: float):
-	# Camera angles
 	var forward_dir = -head.global_transform.basis.z
 	var right_dir = head.global_transform.basis.x
 	var up_dir = Vector3.UP
 
-	# Klavye inputları
 	var thrust = Vector3.ZERO
 	thrust += forward_dir * (1 if Input.is_action_pressed("move_forward") else 0)
 	thrust -= forward_dir * (1 if Input.is_action_pressed("move_back") else 0)
@@ -168,18 +161,13 @@ func handle_zero_g(input: Dictionary, delta: float):
 	if thrust.length() > 0.01:
 		var oxygen_used = vitals.use_oxygen(oxygen_needed)
 		if oxygen_used > 0.0:
-			# Target velocity and momentum
 			var target_velocity = thrust.normalized() * speed
 			velocity = velocity.lerp(target_velocity, delta * 3.5)
 	else:
-		# Drift: keeps the momentum but it decays over time
-		var friction = 0.85  # smaller = slows faster
-		velocity *= pow(friction, delta * 2.5)
+		velocity *= pow(0.85, delta * 2.5)
 
-	# Speed limit
-	var max_speed = thruster_boost_force if sprinting else thruster_force
-	if velocity.length() > max_speed:
-		velocity = velocity.normalized() * max_speed
+	if velocity.length() > speed:
+		velocity = velocity.normalized() * speed
 
 
 # --- NORMAL MOVEMENT ---
@@ -190,13 +178,28 @@ func handle_movement(input: Dictionary, delta: float):
 			speed = run_speed
 		PlayerState.CROUCHING:
 			speed = crouch_speed
+		PlayerState.JUMPING, PlayerState.FALLING:
+			speed = run_speed if input["sprint"] else walk_speed
 
 	var target_velocity = input["direction"] * speed
-	velocity.x = lerp(velocity.x, target_velocity.x, accel * delta if input["moving"] else decel * delta)
-	velocity.z = lerp(velocity.z, target_velocity.z, accel * delta if input["moving"] else decel * delta)
+
+	var current_accel = accel if input["moving"] else decel
+	if not is_on_floor():
+		current_accel *= air_control  # havadayken daha az hızlanma
+
+	velocity.x = lerp(velocity.x, target_velocity.x, current_accel * delta)
+	velocity.z = lerp(velocity.z, target_velocity.z, current_accel * delta)
 
 
+# --- JUMP ---
 func handle_jump(input: Dictionary, delta: float):
+	# COYOTE TIMER
+	if is_on_floor():
+		coyote_timer = coyote_time
+	else:
+		coyote_timer -= delta
+
+	# Fall damage control
 	if is_on_floor():
 		if is_falling:
 			handle_fall_damage()
@@ -204,16 +207,29 @@ func handle_jump(input: Dictionary, delta: float):
 		jumping = false
 		jump_timer = 0.0
 
-		if input["jump_pressed"] and state != PlayerState.CROUCHING:
-			velocity_y = min_jump_force
-			jumping = true
-	else:
+	# Jump input and coyote time
+	if (input["jump_pressed"] and coyote_timer > 0.0 and state != PlayerState.CROUCHING):
+		velocity_y = min_jump_force
+		jumping = true
+		coyote_timer = 0.0
+	
+	# Ceiling check
+	if ceiling_check.is_colliding() and velocity_y > 0:
+		velocity_y = 0.0
+		jumping = false
+		is_falling = true
+		falling_start_y = global_transform.origin.y
+
+	# Gravity
+	if not is_on_floor():
 		velocity_y -= gravity * delta
 
+	# Jump hold
 	if jumping:
-		if input["jump"] and jump_timer < jump_hold_time:
+		if input["jump"] and jump_timer < jump_hold_time and not ceiling_check.is_colliding():
 			var t = jump_timer / jump_hold_time
-			velocity_y = lerp(min_jump_force, max_jump_force, t)
+			var jump_strength = min_jump_force + (max_jump_force - min_jump_force) * sin(t * PI / 2)
+			velocity_y = jump_strength
 			jump_timer += delta
 		else:
 			jumping = false
@@ -223,7 +239,7 @@ func handle_jump(input: Dictionary, delta: float):
 
 func handle_fall_damage():
 	var fall_distance = falling_start_y - global_transform.origin.y
-	if fall_distance > 3.0: # Min distance
+	if fall_distance > 3.0:
 		var fall_damage = (fall_distance - 3.0) * 10.0
 		vitals.damage_health(fall_damage, 1.0)
 	is_falling = false
@@ -231,14 +247,14 @@ func handle_fall_damage():
 
 func update_crouch_height(delta: float):
 	var target_height = stand_height if state != PlayerState.CROUCHING else crouch_height
-	current_height = lerp(current_height, target_height, delta * 10.0)
+	current_height = lerp(current_height, target_height, delta * 9.0)
 	collision_shape.shape.height = current_height
 	collision_shape.position.y = current_height / 2.0
 
 	var target_head_pos = Vector3(0, 1.6, 0) if state != PlayerState.CROUCHING else Vector3(0, 0.9, 0)
-	head.position = head.position.lerp(target_head_pos, delta * 10.0)
+	head.position = head.position.lerp(target_head_pos, delta * 9.0)
 
-# --- SIGNALS ---
+
 func _on_portal_entered(_player) -> void:
 	is_in_space = false
 

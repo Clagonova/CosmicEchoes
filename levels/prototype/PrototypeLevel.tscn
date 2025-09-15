@@ -127,5 +127,10 @@ transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 0.5, -
 polygon = PackedVector2Array(-0.5, 0, -0.5, 0, 1, 1, 1, 0)
 material = ExtResource("7_of0s4")
 
+[node name="PlatformMedium2" type="CSGBox3D" parent="PrototypeStation/CSGCombiner3D"]
+transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 2.5, 1.48492, -4)
+size = Vector3(1, 1, 4)
+material = ExtResource("7_of0s4")
+
 [connection signal="entered_gravity_zone" from="PrototypeStation/GravityPortal" to="Player" method="_on_portal_entered"]
 [connection signal="exited_gravity_zone" from="PrototypeStation/GravityPortal" to="Player" method="_on_portal_exited"]
