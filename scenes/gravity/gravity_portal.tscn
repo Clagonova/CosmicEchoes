@@ -1,9 +1,31 @@
-[gd_scene load_steps=3 format=3 uid="uid://cfcot56qhnd1"]
+[gd_scene load_steps=7 format=3 uid="uid://cfcot56qhnd1"]
 
 [ext_resource type="Script" uid="uid://c2ap8ipnjkcs3" path="res://scenes/gravity/gravity_portal.gd" id="1_fk0xu"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_iagvl"]
-size = Vector3(4, 3.5, 0.5)
+size = Vector3(4, 3.5, 0.1)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_fk0xu"]
+transparency = 1
+shading_mode = 0
+albedo_color = Color(0, 1, 0, 0.3)
+
+[sub_resource type="SphereMesh" id="SphereMesh_cwvps"]
+radius = 0.1
+height = 0.2
+radial_segments = 16
+rings = 8
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_6bacx"]
+transparency = 1
+shading_mode = 0
+albedo_color = Color(1, 0, 0, 0.3)
+
+[sub_resource type="SphereMesh" id="SphereMesh_3va28"]
+radius = 0.1
+height = 0.2
+radial_segments = 16
+rings = 8
 
 [node name="GravityPortal" type="Area3D"]
 script = ExtResource("1_fk0xu")
@@ -12,5 +34,11 @@ script = ExtResource("1_fk0xu")
 shape = SubResource("BoxShape3D_iagvl")
 
 [node name="SphereIn" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.35)
+material_override = SubResource("StandardMaterial3D_fk0xu")
+mesh = SubResource("SphereMesh_cwvps")
 
 [node name="SphereOut" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.35)
+material_override = SubResource("StandardMaterial3D_6bacx")
+mesh = SubResource("SphereMesh_3va28")

@@ -4,6 +4,10 @@ extends Area3D
 signal entered_gravity_zone(player)
 signal exited_gravity_zone(player)
 
+@onready var collision_shape = $CollisionShape3D
+@onready var sphere_in = $SphereIn
+@onready var sphere_out = $SphereOut
+
 @export var collision_size: Vector3 = Vector3.ONE:
 	set(value):
 		collision_size = value
@@ -14,27 +18,39 @@ signal exited_gravity_zone(player)
 		sphere_radius = value
 		_update_spheres()
 
-@onready var collision_shape = $CollisionShape3D
-@onready var sphere_in = $SphereIn
-@onready var sphere_out = $SphereOut
+var players_in_portal := {}
 
 func _ready():
 	if not Engine.is_editor_hint():
 		connect("body_entered", Callable(self, "_on_body_entered"))
+		connect("body_exited", Callable(self, "_on_body_exited"))
 	_update_spheres()
 
 func _on_body_entered(body: Node):
 	if not body.is_in_group("player"):
 		return
+	
+	players_in_portal[body.get_instance_id()] = true
+	# Burada hemen sinyal emit ETMİYORUZ, sadece flag atıyoruz
 
-	var forward = global_transform.basis.z.normalized()
-	var to_player = (body.global_transform.origin - global_transform.origin).normalized()
-	var dot = forward.dot(to_player)
+func _on_body_exited(body: Node):
+	if not body.is_in_group("player"):
+		return
+	
+	if players_in_portal.has(body.get_instance_id()):
+		players_in_portal.erase(body.get_instance_id())
 
-	if dot > 0:
-		emit_signal("exited_gravity_zone", body)  # içeriden çıkış
-	else:
-		emit_signal("entered_gravity_zone", body) # dışarıdan giriş
+		# Çıkış yönünü kontrol et
+		var forward = -global_transform.basis.z.normalized()
+		var to_player = (body.global_transform.origin - global_transform.origin).normalized()
+		var dot = forward.dot(to_player)
+
+		if dot > 0:
+			emit_signal("exited_gravity_zone", body)  # içeriden çıktı, boşluğa gitti
+			print("player exited to space")
+		else:
+			emit_signal("entered_gravity_zone", body) # dışarıdan tam girdi
+			print("player entered gravity area")
 
 func _update_collision_shape():
 	if not collision_shape:
@@ -50,6 +66,8 @@ func _update_collision_shape():
 func _update_spheres():
 	if not is_inside_tree():
 		return
+	
+	var show_debug = Engine.is_editor_hint() or get_tree().debug_collisions_hint
 	
 	# Materyal ayarı
 	var mat_in = StandardMaterial3D.new()
@@ -83,3 +101,9 @@ func _update_spheres():
 		sphere_out.mesh = mesh
 		sphere_out.material_override = mat_out
 		sphere_out.transform = Transform3D(Basis(), Vector3(0, 0, -sphere_radius * 3.5))
+	
+	sphere_in.visible = show_debug
+	sphere_out.visible = show_debug
+
+	if not show_debug:
+		return

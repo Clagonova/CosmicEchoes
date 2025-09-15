@@ -33,11 +33,6 @@ const PlayerState = preload("res://scenes/player/player_states.gd").PlayerState
 @export var max_sway_angle := 1.75
 @export var sway_speed := 15.0
 
-# --- Breathing ---
-var current_breath_speed := 1.0
-var current_breath_amplitude := 0.025
-var breath_timer := 0.0
-
 # --- Internal ---
 var velocity_y := 0.0
 var head
@@ -51,8 +46,6 @@ var yaw := 0.0
 var pitch := 0.0
 var target_yaw := 0.0
 var target_pitch := 0.0
-var sway_roll := 0.0
-var sway_pitch := 0.0
 
 var jumping := false
 var jump_timer := 0.0
@@ -61,12 +54,8 @@ var is_falling := false
 
 var state := PlayerState.IDLE
 
-func _on_portal_entered(_player) -> void:
-	is_in_space = false
 
-func _on_portal_exited(_player) -> void:
-	is_in_space = true
-
+# --- READY ---
 func _ready():
 	head = $Head
 	camera = $Head/Camera3D
@@ -75,6 +64,8 @@ func _ready():
 	current_height = stand_height
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 
+
+# --- INPUT ---
 func _unhandled_input(event):
 	if event is InputEventMouseMotion:
 		target_yaw -= deg_to_rad(event.relative.x * mouse_sens)
@@ -82,6 +73,7 @@ func _unhandled_input(event):
 		target_pitch = clamp(target_pitch, deg_to_rad(-89), deg_to_rad(89))
 
 
+# --- PROCESS ---
 func _process(_delta):
 	# Mouse look smoothing
 	yaw = lerp(yaw, target_yaw, mouse_smooth)
@@ -89,159 +81,180 @@ func _process(_delta):
 	rotation.y = yaw
 	head.rotation.x = pitch
 
+
+# --- PHYSICS ---
 func _physics_process(delta):
-	# --- INPUT ---
-	var input_dir = Input.get_vector("move_left", "move_right", "move_forward", "move_back")
-	var direction = (transform.basis * Vector3(input_dir.x, 0, input_dir.y)).normalized()
-	var moving = direction.length() > 0.01
-	var crouch_pressed = Input.is_action_pressed("crouch")
-	var sprint_pressed = Input.is_action_pressed("sprint")
-	
-	# --- DEBUG GRAVITY SWITCH ---
+	var input = handle_input()
+
+	# Debug toggle
 	if Input.is_action_just_pressed("debug_switch_gravity"):
 		is_in_space = not is_in_space
 
-	# --- STATE DETERMINATION ---
-	if is_in_space:
-		state = PlayerState.ZEROG
-	else:
-		if not is_on_floor():
-			if velocity_y < 0: # düşüyorsa
-				if not is_falling:
-					is_falling = true
-					falling_start_y = global_transform.origin.y
-				if not PlayerState.FALLING:
-					state = PlayerState.FALLING
-			else:
-				state = PlayerState.JUMPING
-		elif crouch_pressed or ceiling_check.is_colliding():
-			state = PlayerState.CROUCHING
-		elif moving:
-			state = PlayerState.RUNNING if sprint_pressed else PlayerState.WALKING
-		else:
-			state = PlayerState.IDLE
+	state = determine_state(input)
 
-	# --- MOVEMENT & VITALS DRAIN ---
 	if state == PlayerState.ZEROG:
-		# --- ZERO-G MOVEMENT & OXYGEN DRAIN ---
-		var thrust_input = Vector3.ZERO
-		thrust_input += direction
-		if Input.is_action_pressed("jump"): # yukarı
-			thrust_input.y += 1.0
-		if crouch_pressed: # aşağı
-			thrust_input.y -= 1.0
-
-		if thrust_input.length() > 0.01:
-			# Oksijen varsa thruster çalışır
-			var sprinting = Input.is_action_pressed("sprint")
-			var speed = thruster_boost_force if sprinting else thruster_force
-			var oxygen_needed = thruster_boost_oxygen_rate * delta if sprinting else thruster_oxygen_rate * delta
-			var oxygen_used = vitals.use_oxygen(oxygen_needed)
-			if oxygen_used > 0.0:
-				velocity += thrust_input.normalized() * speed * delta
-			else:
-				# oksijen bitti: input ignored, sadece mevcut velocity korunuyor
-				pass
-		else:
-			# input yoksa velocity kademeli olarak düşer
-			velocity = lerp(velocity, Vector3.ZERO, delta * 0.4)
+		handle_zero_g(input, delta)
 	else:
 		vitals.apply_fatigue_drain(state, delta)
-		
-		# --- NORMAL MOVEMENT & FALL DAMAGE ---
-		var speed = walk_speed
-		match state:
-			PlayerState.RUNNING:
-				speed = run_speed
-			PlayerState.CROUCHING:
-				speed = crouch_speed
+		handle_movement(input, delta)
+		handle_jump(input, delta)
+		update_crouch_height(delta)
 
-		var target_velocity = direction * speed
-		velocity.x = lerp(velocity.x, target_velocity.x, accel * delta if moving else decel * delta)
-		velocity.z = lerp(velocity.z, target_velocity.z, accel * delta if moving else decel * delta)
-
-		if is_on_floor():
-			if is_falling:
-				var fall_distance = falling_start_y - global_transform.origin.y
-				if fall_distance > 3.0: # minimum mesafe
-					var fall_damage = (fall_distance - 3.0) * 10.0
-					vitals.damage_health(fall_damage, 1.0)
-				is_falling = false
-
-			velocity_y = 0.0
-			jumping = false
-			jump_timer = 0.0
-
-			if Input.is_action_just_pressed("jump") and state != PlayerState.CROUCHING:
-				velocity_y = min_jump_force
-				jumping = true
-		else:
-			velocity_y -= gravity * delta
-
-		if jumping:
-			if Input.is_action_pressed("jump") and jump_timer < jump_hold_time:
-				var t = jump_timer / jump_hold_time
-				var extra_force = lerp(min_jump_force, max_jump_force, t)
-				velocity_y = extra_force
-				jump_timer += delta
-			else:
-				jumping = false
-
-		velocity.y = velocity_y
-
-	# --- CROUCH HEIGHT ---
-	if state != PlayerState.ZEROG:
-		var target_height = stand_height if state != PlayerState.CROUCHING else crouch_height
-		current_height = lerp(current_height, target_height, delta * 10.0)
-		collision_shape.shape.height = current_height
-		collision_shape.position.y = current_height / 2.0
-
-		var target_head_pos = Vector3(0, 1.6, 0) if state != PlayerState.CROUCHING else Vector3(0, 0.9, 0)
-		head.position = head.position.lerp(target_head_pos, delta * 10.0)
-
-	# --- SWAY ---
-	var lateral_velocity = velocity.dot(transform.basis.x)
-	var forward_velocity = velocity.dot(transform.basis.z)
-	if state == PlayerState.CROUCHING:
-		lateral_velocity *= 0.5
-		forward_velocity *= 0.5
-
-	sway_roll = lerp(sway_roll, lateral_velocity / run_speed * max_sway_angle, delta * sway_speed)
-	sway_pitch = lerp(sway_pitch, forward_velocity / run_speed * max_sway_angle, delta * sway_speed)
-
-	head.rotation.z = deg_to_rad(sway_roll)
-	camera.rotation.x = deg_to_rad(pitch) + deg_to_rad(sway_pitch)
-
-	# --- BREATHING ---
-	var target_breath_speed = 1.0
-	var target_breath_amplitude = 0.025
-	match state:
-		PlayerState.IDLE:
-			target_breath_speed = 0.6
-			target_breath_amplitude = 0.015
-		PlayerState.CROUCHING:
-			target_breath_speed = 0.4
-			target_breath_amplitude = 0.01
-		PlayerState.WALKING:
-			target_breath_speed = 1.3
-			target_breath_amplitude = 0.025
-		PlayerState.RUNNING:
-			target_breath_speed = 1.9
-			target_breath_amplitude = 0.04
-		PlayerState.JUMPING:
-			target_breath_speed = 2.2
-			target_breath_amplitude = 0.055
-		PlayerState.ZEROG:
-			target_breath_speed = 0.8
-			target_breath_amplitude = 0.015
-
-	current_breath_speed = lerp(current_breath_speed, target_breath_speed, delta * 2.0)
-	current_breath_amplitude = lerp(current_breath_amplitude, target_breath_amplitude, delta * 2.0)
-
-	breath_timer += delta * current_breath_speed
-	var breath_offset = sin(breath_timer * PI * 2.0) * current_breath_amplitude
-	var base_head_y = current_height - 0.2
-	head.position.y = lerp(head.position.y, base_head_y + breath_offset, delta * 5.0)
-
-	# --- MOVE ---
 	move_and_slide()
+
+
+# --- INPUT HANDLING ---
+func handle_input() -> Dictionary:
+	var input_dir = Input.get_vector("move_left", "move_right", "move_forward", "move_back")
+	
+	# --- Kamera yönüne göre yön ---
+	var cam_forward = head.global_transform.basis.z
+	cam_forward.y = 0
+	cam_forward = cam_forward.normalized()
+	
+	var cam_right = head.global_transform.basis.x
+	cam_right.y = 0
+	cam_right = cam_right.normalized()
+	
+	var direction = (cam_forward * input_dir.y + cam_right * input_dir.x).normalized()
+	
+	return {
+		"direction": direction,
+		"moving": direction.length() > 0.01,
+		"crouch": Input.is_action_pressed("crouch"),
+		"sprint": Input.is_action_pressed("sprint"),
+		"jump": Input.is_action_pressed("jump"),
+		"jump_pressed": Input.is_action_just_pressed("jump"),
+	}
+
+
+
+func determine_state(input: Dictionary) -> PlayerState:
+	if is_in_space:
+		return PlayerState.ZEROG
+	if not is_on_floor():
+		if velocity_y < 0:
+			if not is_falling:
+				is_falling = true
+				falling_start_y = global_transform.origin.y
+			return PlayerState.FALLING
+		else:
+			return PlayerState.JUMPING
+	elif input["crouch"] or ceiling_check.is_colliding():
+		return PlayerState.CROUCHING
+	elif input["moving"]:
+		return PlayerState.RUNNING if input["sprint"] else PlayerState.WALKING
+	else:
+		return PlayerState.IDLE
+
+
+func handle_zero_g(input: Dictionary, delta: float):
+	# Kamera yönleri
+	var forward_dir = -head.global_transform.basis.z
+	var right_dir = head.global_transform.basis.x
+	var up_dir = Vector3.UP
+
+	# Klavye inputları
+	var thrust = Vector3.ZERO
+	thrust += forward_dir * (1 if Input.is_action_pressed("move_forward") else 0)
+	thrust -= forward_dir * (1 if Input.is_action_pressed("move_back") else 0)
+	thrust += right_dir * (1 if Input.is_action_pressed("move_right") else 0)
+	thrust -= right_dir * (1 if Input.is_action_pressed("move_left") else 0)
+
+	# Yükselme/alçalma tuşları
+	if Input.is_action_pressed("jump"):
+		thrust += up_dir
+	if Input.is_action_pressed("crouch"):
+		thrust -= up_dir
+
+	var sprinting = input["sprint"]
+	var speed = thruster_boost_force if sprinting else thruster_force
+	var oxygen_needed = (thruster_boost_oxygen_rate if sprinting else thruster_oxygen_rate) * delta
+
+	if thrust.length() > 0.01:
+		var oxygen_used = vitals.use_oxygen(oxygen_needed)
+		if oxygen_used > 0.0:
+			# Hedef velocity ve momentum
+			var target_velocity = thrust.normalized() * speed
+			velocity = velocity.lerp(target_velocity, delta * 3.5)
+
+			# Smooth rotation
+			var target_yaw_dir = Vector3(velocity.x, 0, velocity.z)
+			if target_yaw_dir.length() > 0.01:
+				var target_yaw_angle = atan2(-target_yaw_dir.x, -target_yaw_dir.z)
+				var rotation_speed = 5.0
+				if sprinting:
+					rotation_speed *= 1.5
+				rotation.y = lerp_angle(rotation.y, target_yaw_angle, delta * rotation_speed)
+	else:
+		# Drift: momentum korunuyor ama yavaş yavaş sürtünme ile azalıyor
+		var friction = 0.85  # daha düşük = daha hızlı yavaşlar
+		velocity *= pow(friction, delta * 2.5)
+
+	# --- Hız limiti ---
+	var max_speed = thruster_boost_force if sprinting else thruster_force
+	if velocity.length() > max_speed:
+		velocity = velocity.normalized() * max_speed
+
+
+func handle_movement(input: Dictionary, delta: float):
+	var speed = walk_speed
+	match state:
+		PlayerState.RUNNING:
+			speed = run_speed
+		PlayerState.CROUCHING:
+			speed = crouch_speed
+
+	var target_velocity = input["direction"] * speed
+	velocity.x = lerp(velocity.x, target_velocity.x, accel * delta if input["moving"] else decel * delta)
+	velocity.z = lerp(velocity.z, target_velocity.z, accel * delta if input["moving"] else decel * delta)
+
+
+func handle_jump(input: Dictionary, delta: float):
+	if is_on_floor():
+		if is_falling:
+			handle_fall_damage()
+		velocity_y = 0.0
+		jumping = false
+		jump_timer = 0.0
+
+		if input["jump_pressed"] and state != PlayerState.CROUCHING:
+			velocity_y = min_jump_force
+			jumping = true
+	else:
+		velocity_y -= gravity * delta
+
+	if jumping:
+		if input["jump"] and jump_timer < jump_hold_time:
+			var t = jump_timer / jump_hold_time
+			velocity_y = lerp(min_jump_force, max_jump_force, t)
+			jump_timer += delta
+		else:
+			jumping = false
+
+	velocity.y = velocity_y
+
+
+func handle_fall_damage():
+	var fall_distance = falling_start_y - global_transform.origin.y
+	if fall_distance > 3.0: # minimum mesafe
+		var fall_damage = (fall_distance - 3.0) * 10.0
+		vitals.damage_health(fall_damage, 1.0)
+	is_falling = false
+
+
+func update_crouch_height(delta: float):
+	var target_height = stand_height if state != PlayerState.CROUCHING else crouch_height
+	current_height = lerp(current_height, target_height, delta * 10.0)
+	collision_shape.shape.height = current_height
+	collision_shape.position.y = current_height / 2.0
+
+	var target_head_pos = Vector3(0, 1.6, 0) if state != PlayerState.CROUCHING else Vector3(0, 0.9, 0)
+	head.position = head.position.lerp(target_head_pos, delta * 10.0)
+
+# --- SIGNALS ---
+func _on_portal_entered(_player) -> void:
+	is_in_space = false
+
+func _on_portal_exited(_player) -> void:
+	is_in_space = true

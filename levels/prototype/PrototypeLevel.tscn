@@ -8,18 +8,6 @@
 [ext_resource type="Material" uid="uid://dy33g0ov2rhu" path="res://levels/prototype/materials/prototype_grid_dark.tres" id="6_of0s4"]
 [ext_resource type="Material" uid="uid://csqe6kmrrvhdh" path="res://levels/prototype/materials/prototype_grid_green.tres" id="7_of0s4"]
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_dlgfo"]
-render_priority = 0
-shader = ExtResource("1_wjmho")
-shader_parameter/star_density = 0.003
-shader_parameter/star_size = 0.05
-shader_parameter/twinkle_speed = 1.106
-
-[sub_resource type="SphereMesh" id="SphereMesh_c6m2d"]
-material = SubResource("ShaderMaterial_dlgfo")
-radius = 1000.0
-height = 2000.0
-
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_7wkp4"]
 sky_top_color = Color(0, 0, 0, 1)
 sky_horizon_color = Color(0, 0, 0, 1)
@@ -36,6 +24,20 @@ tonemap_mode = 2
 ssao_enabled = true
 sdfgi_enabled = true
 glow_enabled = true
+glow_bloom = 0.25
+fog_depth_end = 4000.0
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_dlgfo"]
+render_priority = 0
+shader = ExtResource("1_wjmho")
+shader_parameter/star_density = 0.003
+shader_parameter/star_size = 0.05
+shader_parameter/twinkle_speed = 1.106
+
+[sub_resource type="SphereMesh" id="SphereMesh_c6m2d"]
+material = SubResource("ShaderMaterial_dlgfo")
+radius = 1000.0
+height = 2000.0
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_of0s4"]
 transparency = 1
@@ -43,12 +45,15 @@ albedo_color = Color(0.14, 0.14, 0.14, 0.372549)
 
 [node name="PrototypeUniverse" type="Node3D"]
 
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_wjmho")
+
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
 transform = Transform3D(-0.847122, -0.161563, 0.506243, 0.0457047, 0.92698, 0.372317, -0.52943, 0.338535, -0.77788, 0, 0, 0)
 light_color = Color(1, 0.985, 0.95, 1)
-light_energy = 1.15
+light_energy = 3.0
 shadow_enabled = true
-shadow_blur = 0.8
+shadow_blur = 0.6
 
 [node name="Starfield" parent="." instance=ExtResource("1_dlgfo")]
 
@@ -57,9 +62,6 @@ visible = false
 cast_shadow = 0
 mesh = SubResource("SphereMesh_c6m2d")
 skeleton = NodePath("../WorldEnvironment")
-
-[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
-environment = SubResource("Environment_wjmho")
 
 [node name="VitalsHUD" parent="." instance=ExtResource("3_c6m2d")]
 vitals_path = NodePath("../Player")
@@ -71,7 +73,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.205, 0.41072, 1.833)
 
 [node name="GravityPortal" parent="PrototypeStation" instance=ExtResource("6_bhdgs")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 1.75, -4.75)
-collision_size = Vector3(4, 3.5, 0.5)
+collision_size = Vector3(4, 3.5, 0.1)
 
 [node name="Lights" type="Node" parent="PrototypeStation"]
 
@@ -89,13 +91,13 @@ omni_range = 8.8
 use_collision = true
 
 [node name="Window" type="CSGBox3D" parent="PrototypeStation/CSGCombiner3D"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.0167236, 2, 4.75)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.0167236, 2, 5.23047)
 size = Vector3(7.96387, 2.98438, 0.244141)
 material = SubResource("StandardMaterial3D_of0s4")
 
 [node name="StationExterior" type="CSGBox3D" parent="PrototypeStation/CSGCombiner3D"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, 0)
-size = Vector3(10, 5, 10)
+size = Vector3(11, 6, 11)
 material = ExtResource("6_of0s4")
 
 [node name="Interior" type="CSGBox3D" parent="PrototypeStation/CSGCombiner3D/StationExterior"]
@@ -104,15 +106,15 @@ size = Vector3(9, 4, 9)
 material = ExtResource("6_of0s4")
 
 [node name="EntranceCutout" type="CSGBox3D" parent="PrototypeStation/CSGCombiner3D/StationExterior"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, -0.25, -4.75)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, -0.25, -5)
 operation = 2
-size = Vector3(4, 3.5, 0.5)
+size = Vector3(4, 3.5, 1)
 material = ExtResource("6_of0s4")
 
 [node name="WindowCutout" type="CSGBox3D" parent="PrototypeStation/CSGCombiner3D/StationExterior"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 4.75)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 5)
 operation = 2
-size = Vector3(8, 3, 0.5)
+size = Vector3(8, 3, 1)
 material = ExtResource("6_of0s4")
 
 [node name="PlatformMedium" type="CSGBox3D" parent="PrototypeStation/CSGCombiner3D"]
