@@ -26,15 +26,13 @@ const PlayerState = preload("res://scenes/player/player_states.gd").PlayerState
 
 # --- Thruster ---
 @export var thruster_force := 3.0
-@export var thruster_boost_force := 7.0
+@export var thruster_boost_force := 70.0
 @export var thruster_oxygen_rate := 0.8
 @export var thruster_boost_oxygen_rate := 3.8
 
 # --- Camera ---
 @export var mouse_sens := 0.1
 @export var mouse_smooth := 0.5
-@export var max_sway_angle := 1.75
-@export var sway_speed := 15.0
 
 # --- Internal ---
 var velocity_y := 0.0
