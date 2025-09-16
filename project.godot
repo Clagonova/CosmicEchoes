@@ -13,7 +13,7 @@ config_version=5
 config/name="CosmicEchoes"
 config/tags=PackedStringArray("🌌")
 run/main_scene="uid://6n0eof8k4mvo"
-config/features=PackedStringArray("4.4", "Forward Plus")
+config/features=PackedStringArray("4.5", "Forward Plus")
 config/icon="res://icon.svg"
 
 [display]
@@ -97,4 +97,4 @@ quit={
 [rendering]
 
 anti_aliasing/quality/msaa_3d=3
-anti_aliasing/quality/screen_space_aa=1
+anti_aliasing/quality/screen_space_aa=2
