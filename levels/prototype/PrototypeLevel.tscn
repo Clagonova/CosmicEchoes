@@ -1,9 +1,10 @@
-[gd_scene load_steps=14 format=3 uid="uid://6n0eof8k4mvo"]
+[gd_scene load_steps=15 format=3 uid="uid://6n0eof8k4mvo"]
 
 [ext_resource type="PackedScene" uid="uid://cmmywbr2dt87h" path="res://scenes/player/Player.tscn" id="1_7wkp4"]
 [ext_resource type="PackedScene" uid="uid://cqquqwxo2fj8b" path="res://levels/_skybox/starfield.tscn" id="1_dlgfo"]
 [ext_resource type="Shader" uid="uid://3vg5htbwy3jo" path="res://levels/_skybox/star_skybox.gdshader" id="1_wjmho"]
 [ext_resource type="PackedScene" uid="uid://dk2su158s043r" path="res://scenes/HUD/VitalsHUD.tscn" id="3_c6m2d"]
+[ext_resource type="PackedScene" uid="uid://07n1jxm8nkdu" path="res://scenes/inventory/inventory_hud.tscn" id="4_jq8qo"]
 [ext_resource type="PackedScene" uid="uid://cfcot56qhnd1" path="res://scenes/gravity/gravity_portal.tscn" id="6_bhdgs"]
 [ext_resource type="Material" uid="uid://dy33g0ov2rhu" path="res://levels/prototype/materials/prototype_grid_dark.tres" id="6_of0s4"]
 [ext_resource type="Material" uid="uid://csqe6kmrrvhdh" path="res://levels/prototype/materials/prototype_grid_green.tres" id="7_of0s4"]
@@ -65,6 +66,8 @@ skeleton = NodePath("../WorldEnvironment")
 
 [node name="VitalsHUD" parent="." instance=ExtResource("3_c6m2d")]
 vitals_path = NodePath("../Player")
+
+[node name="InventoryHUD" parent="." instance=ExtResource("4_jq8qo")]
 
 [node name="Player" parent="." instance=ExtResource("1_7wkp4")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.205, 0.41072, 1.833)

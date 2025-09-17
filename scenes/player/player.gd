@@ -4,6 +4,7 @@ const PlayerState = preload("res://scenes/player/player_states.gd").PlayerState
 
 @onready var vitals: Node3D = $Vitals
 @onready var head: Node3D = %Head
+@onready var camera: Camera3D = %Camera3D
 
 # --- Movement ---
 @export var walk_speed := 4.0
@@ -59,7 +60,7 @@ func _ready():
 	collision_shape = $CollisionShape3D
 	ceiling_check = $CeilingCheck
 	current_height = stand_height
-	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
+	#Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 
 
 func _physics_process(delta):

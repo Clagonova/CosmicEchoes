@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="ItemData" load_steps=4 format=3 uid="uid://dusf0441kwkwp"]
+
+[ext_resource type="Texture2D" uid="uid://bwmmupj7gsgm6" path="res://levels/prototype/textures/kenney_dark/texture_12.png" id="1_u7lxb"]
+[ext_resource type="BoxMesh" uid="uid://25enr4j5v636" path="res://scenes/items/dark_cube_mesh.tres" id="2_qelw3"]
+[ext_resource type="Script" uid="uid://ci0l0jnbystpj" path="res://scenes/inventory/item_data.gd" id="2_vrex1"]
+
+[resource]
+script = ExtResource("2_vrex1")
+item_id = "dark_cube"
+item_name = "Dark Cube"
+icon = ExtResource("1_u7lxb")
+mesh = ExtResource("2_qelw3")
+metadata/_custom_type_script = "uid://ci0l0jnbystpj"

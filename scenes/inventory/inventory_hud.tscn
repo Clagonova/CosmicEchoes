@@ -1,0 +1,684 @@
+[gd_scene load_steps=7 format=3 uid="uid://07n1jxm8nkdu"]
+
+[ext_resource type="Script" uid="uid://vjnbc0wgo4md" path="res://scenes/inventory/world_drop.gd" id="1_8gpwd"]
+[ext_resource type="Script" uid="uid://cbhb16ptvwtxo" path="res://scenes/inventory/item_slot.gd" id="1_qpeqa"]
+[ext_resource type="Script" uid="uid://bcl3xsccxxt3w" path="res://scenes/inventory/inventory_panel.gd" id="1_y4bxm"]
+[ext_resource type="Resource" uid="uid://dusf0441kwkwp" path="res://scenes/items/dark_cube.tres" id="3_y4bxm"]
+[ext_resource type="Resource" uid="uid://djxj15muawd1s" path="res://scenes/items/green_cube.tres" id="4_8gpwd"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_of0s4"]
+font_size = 11
+outline_size = 3
+outline_color = Color(0, 0, 0, 1)
+
+[node name="InventoryHUD" type="CanvasLayer"]
+
+[node name="WorldDropArea" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_8gpwd")
+
+[node name="InventoryPanel" type="Panel" parent="."]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -213.0
+offset_top = -45.0
+offset_right = 213.0
+offset_bottom = 45.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_y4bxm")
+
+[node name="MarginContainer" type="MarginContainer" parent="InventoryPanel"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -211.0
+offset_top = -42.0
+offset_right = 211.0
+offset_bottom = 42.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 4
+theme_override_constants/margin_top = 4
+theme_override_constants/margin_right = 4
+theme_override_constants/margin_bottom = 4
+
+[node name="GridContainer" type="GridContainer" parent="InventoryPanel/MarginContainer"]
+layout_mode = 2
+theme_override_constants/h_separation = 2
+theme_override_constants/v_separation = 2
+columns = 10
+
+[node name="ItemSlot" type="Panel" parent="InventoryPanel/MarginContainer/GridContainer"]
+custom_minimum_size = Vector2(40, 40)
+layout_mode = 2
+script = ExtResource("1_qpeqa")
+item = ExtResource("3_y4bxm")
+
+[node name="Icon" type="TextureRect" parent="InventoryPanel/MarginContainer/GridContainer/ItemSlot"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.05
+anchor_top = 0.05
+anchor_right = 0.95
+anchor_bottom = 0.95
+grow_horizontal = 2
+grow_vertical = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Amount" type="Label" parent="InventoryPanel/MarginContainer/GridContainer/ItemSlot"]
+visible = false
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -34.5
+offset_right = -2.0
+offset_bottom = 17.0
+grow_horizontal = 0
+text = "99"
+label_settings = SubResource("LabelSettings_of0s4")
+horizontal_alignment = 2
+
+[node name="ItemSlot2" type="Panel" parent="InventoryPanel/MarginContainer/GridContainer"]
+custom_minimum_size = Vector2(40, 40)
+layout_mode = 2
+script = ExtResource("1_qpeqa")
+
+[node name="Icon" type="TextureRect" parent="InventoryPanel/MarginContainer/GridContainer/ItemSlot2"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.05
+anchor_top = 0.05
+anchor_right = 0.95
+anchor_bottom = 0.95
+grow_horizontal = 2
+grow_vertical = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Amount" type="Label" parent="InventoryPanel/MarginContainer/GridContainer/ItemSlot2"]
+visible = false
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -34.5
+offset_right = -2.0
+offset_bottom = 17.0
+grow_horizontal = 0
+text = "99"
+label_settings = SubResource("LabelSettings_of0s4")
+horizontal_alignment = 2
+
+[node name="ItemSlot3" type="Panel" parent="InventoryPanel/MarginContainer/GridContainer"]
+custom_minimum_size = Vector2(40, 40)
+layout_mode = 2
+script = ExtResource("1_qpeqa")
+
+[node name="Icon" type="TextureRect" parent="InventoryPanel/MarginContainer/GridContainer/ItemSlot3"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.05
+anchor_top = 0.05
+anchor_right = 0.95
+anchor_bottom = 0.95
+grow_horizontal = 2
+grow_vertical = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Amount" type="Label" parent="InventoryPanel/MarginContainer/GridContainer/ItemSlot3"]
+visible = false
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -34.5
+offset_right = -2.0
+offset_bottom = 17.0
+grow_horizontal = 0
+text = "99"
+label_settings = SubResource("LabelSettings_of0s4")
+horizontal_alignment = 2
+
+[node name="ItemSlot4" type="Panel" parent="InventoryPanel/MarginContainer/GridContainer"]
+custom_minimum_size = Vector2(40, 40)
+layout_mode = 2
+script = ExtResource("1_qpeqa")
+
+[node name="Icon" type="TextureRect" parent="InventoryPanel/MarginContainer/GridContainer/ItemSlot4"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.05
+anchor_top = 0.05
+anchor_right = 0.95
+anchor_bottom = 0.95
+grow_horizontal = 2
+grow_vertical = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Amount" type="Label" parent="InventoryPanel/MarginContainer/GridContainer/ItemSlot4"]
+visible = false
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -34.5
+offset_right = -2.0
+offset_bottom = 17.0
+grow_horizontal = 0
+text = "99"
+label_settings = SubResource("LabelSettings_of0s4")
+horizontal_alignment = 2
+
+[node name="ItemSlot5" type="Panel" parent="InventoryPanel/MarginContainer/GridContainer"]
+custom_minimum_size = Vector2(40, 40)
+layout_mode = 2
+script = ExtResource("1_qpeqa")
+item = ExtResource("4_8gpwd")
+
+[node name="Icon" type="TextureRect" parent="InventoryPanel/MarginContainer/GridContainer/ItemSlot5"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.05
+anchor_top = 0.05
+anchor_right = 0.95
+anchor_bottom = 0.95
+grow_horizontal = 2
+grow_vertical = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Amount" type="Label" parent="InventoryPanel/MarginContainer/GridContainer/ItemSlot5"]
+visible = false
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -34.5
+offset_right = -2.0
+offset_bottom = 17.0
+grow_horizontal = 0
+text = "99"
+label_settings = SubResource("LabelSettings_of0s4")
+horizontal_alignment = 2
+
+[node name="ItemSlot6" type="Panel" parent="InventoryPanel/MarginContainer/GridContainer"]
+custom_minimum_size = Vector2(40, 40)
+layout_mode = 2
+script = ExtResource("1_qpeqa")
+item = ExtResource("4_8gpwd")
+
+[node name="Icon" type="TextureRect" parent="InventoryPanel/MarginContainer/GridContainer/ItemSlot6"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.05
+anchor_top = 0.05
+anchor_right = 0.95
+anchor_bottom = 0.95
+grow_horizontal = 2
+grow_vertical = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Amount" type="Label" parent="InventoryPanel/MarginContainer/GridContainer/ItemSlot6"]
+visible = false
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -34.5
+offset_right = -2.0
+offset_bottom = 17.0
+grow_horizontal = 0
+text = "99"
+label_settings = SubResource("LabelSettings_of0s4")
+horizontal_alignment = 2
+
+[node name="ItemSlot7" type="Panel" parent="InventoryPanel/MarginContainer/GridContainer"]
+custom_minimum_size = Vector2(40, 40)
+layout_mode = 2
+script = ExtResource("1_qpeqa")
+
+[node name="Icon" type="TextureRect" parent="InventoryPanel/MarginContainer/GridContainer/ItemSlot7"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.05
+anchor_top = 0.05
+anchor_right = 0.95
+anchor_bottom = 0.95
+grow_horizontal = 2
+grow_vertical = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Amount" type="Label" parent="InventoryPanel/MarginContainer/GridContainer/ItemSlot7"]
+visible = false
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -34.5
+offset_right = -2.0
+offset_bottom = 17.0
+grow_horizontal = 0
+text = "99"
+label_settings = SubResource("LabelSettings_of0s4")
+horizontal_alignment = 2
+
+[node name="ItemSlot8" type="Panel" parent="InventoryPanel/MarginContainer/GridContainer"]
+custom_minimum_size = Vector2(40, 40)
+layout_mode = 2
+script = ExtResource("1_qpeqa")
+
+[node name="Icon" type="TextureRect" parent="InventoryPanel/MarginContainer/GridContainer/ItemSlot8"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.05
+anchor_top = 0.05
+anchor_right = 0.95
+anchor_bottom = 0.95
+grow_horizontal = 2
+grow_vertical = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Amount" type="Label" parent="InventoryPanel/MarginContainer/GridContainer/ItemSlot8"]
+visible = false
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -34.5
+offset_right = -2.0
+offset_bottom = 17.0
+grow_horizontal = 0
+text = "99"
+label_settings = SubResource("LabelSettings_of0s4")
+horizontal_alignment = 2
+
+[node name="ItemSlot9" type="Panel" parent="InventoryPanel/MarginContainer/GridContainer"]
+custom_minimum_size = Vector2(40, 40)
+layout_mode = 2
+script = ExtResource("1_qpeqa")
+
+[node name="Icon" type="TextureRect" parent="InventoryPanel/MarginContainer/GridContainer/ItemSlot9"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.05
+anchor_top = 0.05
+anchor_right = 0.95
+anchor_bottom = 0.95
+grow_horizontal = 2
+grow_vertical = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Amount" type="Label" parent="InventoryPanel/MarginContainer/GridContainer/ItemSlot9"]
+visible = false
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -34.5
+offset_right = -2.0
+offset_bottom = 17.0
+grow_horizontal = 0
+text = "99"
+label_settings = SubResource("LabelSettings_of0s4")
+horizontal_alignment = 2
+
+[node name="ItemSlot10" type="Panel" parent="InventoryPanel/MarginContainer/GridContainer"]
+custom_minimum_size = Vector2(40, 40)
+layout_mode = 2
+script = ExtResource("1_qpeqa")
+
+[node name="Icon" type="TextureRect" parent="InventoryPanel/MarginContainer/GridContainer/ItemSlot10"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.05
+anchor_top = 0.05
+anchor_right = 0.95
+anchor_bottom = 0.95
+grow_horizontal = 2
+grow_vertical = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Amount" type="Label" parent="InventoryPanel/MarginContainer/GridContainer/ItemSlot10"]
+visible = false
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -34.5
+offset_right = -2.0
+offset_bottom = 17.0
+grow_horizontal = 0
+text = "99"
+label_settings = SubResource("LabelSettings_of0s4")
+horizontal_alignment = 2
+
+[node name="ItemSlot11" type="Panel" parent="InventoryPanel/MarginContainer/GridContainer"]
+custom_minimum_size = Vector2(40, 40)
+layout_mode = 2
+script = ExtResource("1_qpeqa")
+
+[node name="Icon" type="TextureRect" parent="InventoryPanel/MarginContainer/GridContainer/ItemSlot11"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.05
+anchor_top = 0.05
+anchor_right = 0.95
+anchor_bottom = 0.95
+grow_horizontal = 2
+grow_vertical = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Amount" type="Label" parent="InventoryPanel/MarginContainer/GridContainer/ItemSlot11"]
+visible = false
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -34.5
+offset_right = -2.0
+offset_bottom = 17.0
+grow_horizontal = 0
+text = "99"
+label_settings = SubResource("LabelSettings_of0s4")
+horizontal_alignment = 2
+
+[node name="ItemSlot12" type="Panel" parent="InventoryPanel/MarginContainer/GridContainer"]
+custom_minimum_size = Vector2(40, 40)
+layout_mode = 2
+script = ExtResource("1_qpeqa")
+
+[node name="Icon" type="TextureRect" parent="InventoryPanel/MarginContainer/GridContainer/ItemSlot12"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.05
+anchor_top = 0.05
+anchor_right = 0.95
+anchor_bottom = 0.95
+grow_horizontal = 2
+grow_vertical = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Amount" type="Label" parent="InventoryPanel/MarginContainer/GridContainer/ItemSlot12"]
+visible = false
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -34.5
+offset_right = -2.0
+offset_bottom = 17.0
+grow_horizontal = 0
+text = "99"
+label_settings = SubResource("LabelSettings_of0s4")
+horizontal_alignment = 2
+
+[node name="ItemSlot13" type="Panel" parent="InventoryPanel/MarginContainer/GridContainer"]
+custom_minimum_size = Vector2(40, 40)
+layout_mode = 2
+script = ExtResource("1_qpeqa")
+
+[node name="Icon" type="TextureRect" parent="InventoryPanel/MarginContainer/GridContainer/ItemSlot13"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.05
+anchor_top = 0.05
+anchor_right = 0.95
+anchor_bottom = 0.95
+grow_horizontal = 2
+grow_vertical = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Amount" type="Label" parent="InventoryPanel/MarginContainer/GridContainer/ItemSlot13"]
+visible = false
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -34.5
+offset_right = -2.0
+offset_bottom = 17.0
+grow_horizontal = 0
+text = "99"
+label_settings = SubResource("LabelSettings_of0s4")
+horizontal_alignment = 2
+
+[node name="ItemSlot14" type="Panel" parent="InventoryPanel/MarginContainer/GridContainer"]
+custom_minimum_size = Vector2(40, 40)
+layout_mode = 2
+script = ExtResource("1_qpeqa")
+
+[node name="Icon" type="TextureRect" parent="InventoryPanel/MarginContainer/GridContainer/ItemSlot14"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.05
+anchor_top = 0.05
+anchor_right = 0.95
+anchor_bottom = 0.95
+grow_horizontal = 2
+grow_vertical = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Amount" type="Label" parent="InventoryPanel/MarginContainer/GridContainer/ItemSlot14"]
+visible = false
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -34.5
+offset_right = -2.0
+offset_bottom = 17.0
+grow_horizontal = 0
+text = "99"
+label_settings = SubResource("LabelSettings_of0s4")
+horizontal_alignment = 2
+
+[node name="ItemSlot15" type="Panel" parent="InventoryPanel/MarginContainer/GridContainer"]
+custom_minimum_size = Vector2(40, 40)
+layout_mode = 2
+script = ExtResource("1_qpeqa")
+
+[node name="Icon" type="TextureRect" parent="InventoryPanel/MarginContainer/GridContainer/ItemSlot15"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.05
+anchor_top = 0.05
+anchor_right = 0.95
+anchor_bottom = 0.95
+grow_horizontal = 2
+grow_vertical = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Amount" type="Label" parent="InventoryPanel/MarginContainer/GridContainer/ItemSlot15"]
+visible = false
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -34.5
+offset_right = -2.0
+offset_bottom = 17.0
+grow_horizontal = 0
+text = "99"
+label_settings = SubResource("LabelSettings_of0s4")
+horizontal_alignment = 2
+
+[node name="ItemSlot16" type="Panel" parent="InventoryPanel/MarginContainer/GridContainer"]
+custom_minimum_size = Vector2(40, 40)
+layout_mode = 2
+script = ExtResource("1_qpeqa")
+
+[node name="Icon" type="TextureRect" parent="InventoryPanel/MarginContainer/GridContainer/ItemSlot16"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.05
+anchor_top = 0.05
+anchor_right = 0.95
+anchor_bottom = 0.95
+grow_horizontal = 2
+grow_vertical = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Amount" type="Label" parent="InventoryPanel/MarginContainer/GridContainer/ItemSlot16"]
+visible = false
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -34.5
+offset_right = -2.0
+offset_bottom = 17.0
+grow_horizontal = 0
+text = "99"
+label_settings = SubResource("LabelSettings_of0s4")
+horizontal_alignment = 2
+
+[node name="ItemSlot17" type="Panel" parent="InventoryPanel/MarginContainer/GridContainer"]
+custom_minimum_size = Vector2(40, 40)
+layout_mode = 2
+script = ExtResource("1_qpeqa")
+
+[node name="Icon" type="TextureRect" parent="InventoryPanel/MarginContainer/GridContainer/ItemSlot17"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.05
+anchor_top = 0.05
+anchor_right = 0.95
+anchor_bottom = 0.95
+grow_horizontal = 2
+grow_vertical = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Amount" type="Label" parent="InventoryPanel/MarginContainer/GridContainer/ItemSlot17"]
+visible = false
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -34.5
+offset_right = -2.0
+offset_bottom = 17.0
+grow_horizontal = 0
+text = "99"
+label_settings = SubResource("LabelSettings_of0s4")
+horizontal_alignment = 2
+
+[node name="ItemSlot18" type="Panel" parent="InventoryPanel/MarginContainer/GridContainer"]
+custom_minimum_size = Vector2(40, 40)
+layout_mode = 2
+script = ExtResource("1_qpeqa")
+
+[node name="Icon" type="TextureRect" parent="InventoryPanel/MarginContainer/GridContainer/ItemSlot18"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.05
+anchor_top = 0.05
+anchor_right = 0.95
+anchor_bottom = 0.95
+grow_horizontal = 2
+grow_vertical = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Amount" type="Label" parent="InventoryPanel/MarginContainer/GridContainer/ItemSlot18"]
+visible = false
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -34.5
+offset_right = -2.0
+offset_bottom = 17.0
+grow_horizontal = 0
+text = "99"
+label_settings = SubResource("LabelSettings_of0s4")
+horizontal_alignment = 2
+
+[node name="ItemSlot19" type="Panel" parent="InventoryPanel/MarginContainer/GridContainer"]
+custom_minimum_size = Vector2(40, 40)
+layout_mode = 2
+script = ExtResource("1_qpeqa")
+
+[node name="Icon" type="TextureRect" parent="InventoryPanel/MarginContainer/GridContainer/ItemSlot19"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.05
+anchor_top = 0.05
+anchor_right = 0.95
+anchor_bottom = 0.95
+grow_horizontal = 2
+grow_vertical = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Amount" type="Label" parent="InventoryPanel/MarginContainer/GridContainer/ItemSlot19"]
+visible = false
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -34.5
+offset_right = -2.0
+offset_bottom = 17.0
+grow_horizontal = 0
+text = "99"
+label_settings = SubResource("LabelSettings_of0s4")
+horizontal_alignment = 2
+
+[node name="ItemSlot20" type="Panel" parent="InventoryPanel/MarginContainer/GridContainer"]
+custom_minimum_size = Vector2(40, 40)
+layout_mode = 2
+script = ExtResource("1_qpeqa")
+
+[node name="Icon" type="TextureRect" parent="InventoryPanel/MarginContainer/GridContainer/ItemSlot20"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.05
+anchor_top = 0.05
+anchor_right = 0.95
+anchor_bottom = 0.95
+grow_horizontal = 2
+grow_vertical = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Amount" type="Label" parent="InventoryPanel/MarginContainer/GridContainer/ItemSlot20"]
+visible = false
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -34.5
+offset_right = -2.0
+offset_bottom = 17.0
+grow_horizontal = 0
+text = "99"
+label_settings = SubResource("LabelSettings_of0s4")
+horizontal_alignment = 2
