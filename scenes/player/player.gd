@@ -27,13 +27,13 @@ const PlayerState = preload("res://scenes/player/player_states.gd").PlayerState
 
 # --- Thruster ---
 @export var thruster_force := 3.0
-@export var thruster_boost_force := 70.0
+@export var thruster_boost_force := 7.0
 @export var thruster_oxygen_rate := 0.8
 @export var thruster_boost_oxygen_rate := 3.8
 
 # --- Camera ---
 @export var mouse_sens := 0.1
-@export var mouse_smooth := 0.5
+@export var mouse_smooth := 0.8
 
 # --- Internal ---
 var velocity_y := 0.0
@@ -60,7 +60,7 @@ func _ready():
 	collision_shape = $CollisionShape3D
 	ceiling_check = $CeilingCheck
 	current_height = stand_height
-	#Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
+	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 
 
 func _physics_process(delta):
@@ -120,6 +120,7 @@ func handle_input() -> Dictionary:
 	}
 
 
+# --- PLAYER STATES ---
 func determine_state(input: Dictionary) -> PlayerState:
 	if is_in_space:
 		return PlayerState.ZEROG

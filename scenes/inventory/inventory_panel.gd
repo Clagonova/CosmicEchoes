@@ -1,5 +1,7 @@
 extends Panel
 
+@onready var inventory_hud: CanvasLayer = $".."
+
 
 # Hides the forbidden version of the mouse cursor
 func _process(_delta: float) -> void:
@@ -16,3 +18,15 @@ func _notification(what: int) -> void:
 			if data_bk:
 				data_bk.icon.show()
 				data_bk = null
+
+func _input(event):
+	if event.is_action_pressed("inventory"):
+		toggle_inventory_hud()
+
+func toggle_inventory_hud() -> void:
+	inventory_hud.visible = not inventory_hud.visible
+	
+	if inventory_hud.visible:
+		Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
+	else:
+		Input.mouse_mode = Input.MOUSE_MODE_CAPTURED

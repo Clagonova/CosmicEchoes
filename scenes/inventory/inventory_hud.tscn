@@ -1,10 +1,17 @@
-[gd_scene load_steps=7 format=3 uid="uid://07n1jxm8nkdu"]
+[gd_scene load_steps=8 format=3 uid="uid://07n1jxm8nkdu"]
 
 [ext_resource type="Script" uid="uid://vjnbc0wgo4md" path="res://scenes/inventory/world_drop.gd" id="1_8gpwd"]
 [ext_resource type="Script" uid="uid://cbhb16ptvwtxo" path="res://scenes/inventory/item_slot.gd" id="1_qpeqa"]
 [ext_resource type="Script" uid="uid://bcl3xsccxxt3w" path="res://scenes/inventory/inventory_panel.gd" id="1_y4bxm"]
 [ext_resource type="Resource" uid="uid://dusf0441kwkwp" path="res://scenes/items/dark_cube.tres" id="3_y4bxm"]
 [ext_resource type="Resource" uid="uid://djxj15muawd1s" path="res://scenes/items/green_cube.tres" id="4_8gpwd"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_8gpwd"]
+bg_color = Color(0, 0, 0, 0.11764706)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
 
 [sub_resource type="LabelSettings" id="LabelSettings_of0s4"]
 font_size = 11
@@ -23,17 +30,18 @@ grow_vertical = 2
 script = ExtResource("1_8gpwd")
 
 [node name="InventoryPanel" type="Panel" parent="."]
-anchors_preset = 8
+anchors_preset = 7
 anchor_left = 0.5
-anchor_top = 0.5
+anchor_top = 1.0
 anchor_right = 0.5
-anchor_bottom = 0.5
+anchor_bottom = 1.0
 offset_left = -213.0
-offset_top = -45.0
+offset_top = -111.0
 offset_right = 213.0
-offset_bottom = 45.0
+offset_bottom = -21.0
 grow_horizontal = 2
-grow_vertical = 2
+grow_vertical = 0
+theme_override_styles/panel = SubResource("StyleBoxFlat_8gpwd")
 script = ExtResource("1_y4bxm")
 
 [node name="MarginContainer" type="MarginContainer" parent="InventoryPanel"]

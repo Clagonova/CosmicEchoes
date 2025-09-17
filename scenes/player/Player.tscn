@@ -1,12 +1,19 @@
-[gd_scene load_steps=5 format=3 uid="uid://cmmywbr2dt87h"]
+[gd_scene load_steps=7 format=3 uid="uid://cmmywbr2dt87h"]
 
 [ext_resource type="Script" uid="uid://cqqdd0j4flgps" path="res://scenes/player/player.gd" id="1_wr5hl"]
 [ext_resource type="PackedScene" uid="uid://ctl0tnkew347e" path="res://scenes/player/Vitals.tscn" id="2_4kuee"]
 [ext_resource type="Script" uid="uid://nwckdynyfetf" path="res://scenes/player/camera_effects.gd" id="3_4kuee"]
+[ext_resource type="Shader" uid="uid://b5grlg1oi5cdd" path="res://scenes/player/crosshair.gdshader" id="4_524rm"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_x7p2l"]
 radius = 0.4
 height = 1.8
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_tpg5x"]
+shader = ExtResource("4_524rm")
+shader_parameter/crosshair_color = Color(1, 1, 1, 1)
+shader_parameter/radius = 0.030000001425
+shader_parameter/opacity = 0.6499999854712
 
 [node name="Player" type="CharacterBody3D" groups=["player"]]
 script = ExtResource("1_wr5hl")
@@ -34,3 +41,18 @@ unique_name_in_owner = true
 [node name="CeilingCheck" type="RayCast3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, 0)
 target_position = Vector3(0, 1, 0)
+
+[node name="Crosshair" type="ColorRect" parent="."]
+material = SubResource("ShaderMaterial_tpg5x")
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -20.0
+offset_right = 20.0
+offset_bottom = 20.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
