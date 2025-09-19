@@ -1,6 +1,6 @@
 [gd_scene load_steps=6 format=4 uid="uid://cijmcsbpgq6r3"]
 
-[ext_resource type="Script" path="res://scenes/inventory/interactable_item.gd" id="1_as8a6"]
+[ext_resource type="Script" uid="uid://cwh0bsrq6lnsv" path="res://scenes/inventory/interactable_item.gd" id="1_as8a6"]
 [ext_resource type="Material" uid="uid://j7lm8uro73yd" path="res://assets/materials/items/outline.tres" id="2_whvr4"]
 
 [sub_resource type="BoxMesh" id="BoxMesh_7hpyh"]

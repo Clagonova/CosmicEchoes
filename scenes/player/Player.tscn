@@ -19,6 +19,7 @@ script = ExtResource("5_c3xxp")
 item_name = "Test Cube"
 icon = ExtResource("6_npwbq")
 item_model_prefab = ExtResource("6_c3xxp")
+max_stack_amount = 99
 metadata/_custom_type_script = "uid://cuueqwmrdkjq1"
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_tpg5x"]

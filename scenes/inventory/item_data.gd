@@ -6,3 +6,7 @@ class_name ItemData extends Resource
 #@export_multiline var item_desc: String
 
 @export var item_model_prefab: PackedScene
+
+# Stack özellikleri
+@export var max_stack_amount: int = 1 # Default: stacklenemez
+var amount: int = 1 # O anki miktar
