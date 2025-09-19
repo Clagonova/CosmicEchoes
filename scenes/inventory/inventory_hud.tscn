@@ -1,10 +1,21 @@
-[gd_scene load_steps=8 format=3 uid="uid://07n1jxm8nkdu"]
+[gd_scene load_steps=12 format=3 uid="uid://07n1jxm8nkdu"]
 
 [ext_resource type="Script" uid="uid://vjnbc0wgo4md" path="res://scenes/inventory/world_drop.gd" id="1_8gpwd"]
+[ext_resource type="Shader" uid="uid://bra0y52n6sw17" path="res://scenes/interface/darkened_blur.gdshader" id="1_c2jq5"]
 [ext_resource type="Script" uid="uid://cbhb16ptvwtxo" path="res://scenes/inventory/item_slot.gd" id="1_qpeqa"]
 [ext_resource type="Script" uid="uid://bcl3xsccxxt3w" path="res://scenes/inventory/inventory_panel.gd" id="1_y4bxm"]
+[ext_resource type="FontFile" uid="uid://b6ra0qfu0437o" path="res://scenes/interface/fonts/Terminal F4.ttf" id="2_bjoyw"]
 [ext_resource type="Resource" uid="uid://dusf0441kwkwp" path="res://scenes/items/dark_cube.tres" id="3_y4bxm"]
 [ext_resource type="Resource" uid="uid://djxj15muawd1s" path="res://scenes/items/green_cube.tres" id="4_8gpwd"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_8mine"]
+shader = ExtResource("1_c2jq5")
+shader_parameter/lod = 0.150000007125
+shader_parameter/mix_percentage = 0.3
+
+[sub_resource type="Theme" id="Theme_c2jq5"]
+default_font = ExtResource("2_bjoyw")
+default_font_size = 12
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_8gpwd"]
 bg_color = Color(0, 0, 0, 0.11764706)
@@ -19,6 +30,15 @@ outline_size = 3
 outline_color = Color(0, 0, 0, 1)
 
 [node name="InventoryHUD" type="CanvasLayer"]
+
+[node name="ColorRect" type="ColorRect" parent="."]
+material = SubResource("ShaderMaterial_8mine")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
 
 [node name="WorldDropArea" type="Control" parent="."]
 layout_mode = 3
@@ -41,6 +61,7 @@ offset_right = 213.0
 offset_bottom = -21.0
 grow_horizontal = 2
 grow_vertical = 0
+theme = SubResource("Theme_c2jq5")
 theme_override_styles/panel = SubResource("StyleBoxFlat_8gpwd")
 script = ExtResource("1_y4bxm")
 

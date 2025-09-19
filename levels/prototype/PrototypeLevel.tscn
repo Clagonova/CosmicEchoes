@@ -1,4 +1,4 @@
-[gd_scene load_steps=15 format=3 uid="uid://6n0eof8k4mvo"]
+[gd_scene load_steps=17 format=3 uid="uid://6n0eof8k4mvo"]
 
 [ext_resource type="PackedScene" uid="uid://cmmywbr2dt87h" path="res://scenes/player/Player.tscn" id="1_7wkp4"]
 [ext_resource type="PackedScene" uid="uid://cqquqwxo2fj8b" path="res://levels/_skybox/starfield.tscn" id="1_dlgfo"]
@@ -8,6 +8,7 @@
 [ext_resource type="PackedScene" uid="uid://cfcot56qhnd1" path="res://scenes/gravity/gravity_portal.tscn" id="6_bhdgs"]
 [ext_resource type="Material" uid="uid://dy33g0ov2rhu" path="res://levels/prototype/materials/prototype_grid_dark.tres" id="6_of0s4"]
 [ext_resource type="Material" uid="uid://csqe6kmrrvhdh" path="res://levels/prototype/materials/prototype_grid_green.tres" id="7_of0s4"]
+[ext_resource type="Shader" uid="uid://c3qlem1f4tfh1" path="res://scenes/HUD/psx_screen_shader.gdshader" id="9_7hpyh"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_7wkp4"]
 sky_top_color = Color(0, 0, 0, 1)
@@ -40,6 +41,19 @@ material = SubResource("ShaderMaterial_dlgfo")
 radius = 1000.0
 height = 2000.0
 
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_4rs3r"]
+shader = ExtResource("9_7hpyh")
+shader_parameter/pixel_resolution = 512.0
+shader_parameter/color_steps = 64
+shader_parameter/noise_strength = 0.050000002375
+shader_parameter/enable_dither = true
+shader_parameter/dither_strength = 0.10000000475
+shader_parameter/enable_glow = true
+shader_parameter/glow_strength = 0.2000000095
+shader_parameter/glow_spread = 0.005
+shader_parameter/enable_vintage = true
+shader_parameter/vintage_strength = 0.400000019
+
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_of0s4"]
 transparency = 1
 albedo_color = Color(0.14, 0.14, 0.14, 0.372549)
@@ -63,6 +77,17 @@ visible = false
 cast_shadow = 0
 mesh = SubResource("SphereMesh_c6m2d")
 skeleton = NodePath("../WorldEnvironment")
+
+[node name="ScreenEffects" type="CanvasLayer" parent="."]
+
+[node name="PSX" type="ColorRect" parent="ScreenEffects"]
+material = SubResource("ShaderMaterial_4rs3r")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
 
 [node name="VitalsHUD" parent="." instance=ExtResource("3_c6m2d")]
 vitals_path = NodePath("../Player")

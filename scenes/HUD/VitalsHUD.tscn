@@ -1,6 +1,7 @@
-[gd_scene load_steps=14 format=3 uid="uid://dk2su158s043r"]
+[gd_scene load_steps=15 format=3 uid="uid://dk2su158s043r"]
 
 [ext_resource type="Script" uid="uid://yvpwhl2trv6t" path="res://scenes/HUD/vitals_hud.gd" id="1_putkd"]
+[ext_resource type="FontFile" uid="uid://b6ra0qfu0437o" path="res://scenes/interface/fonts/Terminal F4.ttf" id="2_atal1"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hff5w"]
 bg_color = Color(0, 0, 0, 0.117647)
@@ -24,6 +25,7 @@ corner_radius_bottom_left = 3
 [sub_resource type="Theme" id="Theme_rxgtw"]
 ProgressBar/constants/outline_size = 4
 ProgressBar/font_sizes/font_size = 12
+ProgressBar/fonts/font = ExtResource("2_atal1")
 ProgressBar/styles/background = SubResource("StyleBoxFlat_hff5w")
 ProgressBar/styles/fill = SubResource("StyleBoxFlat_vmayo")
 
@@ -49,6 +51,7 @@ corner_radius_bottom_left = 3
 [sub_resource type="Theme" id="Theme_hff5w"]
 ProgressBar/constants/outline_size = 4
 ProgressBar/font_sizes/font_size = 12
+ProgressBar/fonts/font = ExtResource("2_atal1")
 ProgressBar/styles/background = SubResource("StyleBoxFlat_putkd")
 ProgressBar/styles/fill = SubResource("StyleBoxFlat_atal1")
 
@@ -74,6 +77,7 @@ corner_radius_bottom_left = 3
 [sub_resource type="Theme" id="Theme_4b0k3"]
 ProgressBar/constants/outline_size = 4
 ProgressBar/font_sizes/font_size = 12
+ProgressBar/fonts/font = ExtResource("2_atal1")
 ProgressBar/styles/background = SubResource("StyleBoxFlat_o540l")
 ProgressBar/styles/fill = SubResource("StyleBoxFlat_lysyk")
 
@@ -99,6 +103,7 @@ corner_radius_bottom_left = 3
 [sub_resource type="Theme" id="Theme_ys8b8"]
 ProgressBar/constants/outline_size = 4
 ProgressBar/font_sizes/font_size = 12
+ProgressBar/fonts/font = ExtResource("2_atal1")
 ProgressBar/styles/background = SubResource("StyleBoxFlat_ep46x")
 ProgressBar/styles/fill = SubResource("StyleBoxFlat_4b0k3")
 
@@ -110,8 +115,8 @@ anchors_preset = 2
 anchor_top = 1.0
 anchor_bottom = 1.0
 offset_left = 24.0
-offset_top = -93.0
-offset_right = 196.0
+offset_top = -84.0
+offset_right = 154.0
 offset_bottom = -24.0
 grow_vertical = 0
 theme_override_constants/separation = 3
@@ -139,9 +144,9 @@ unique_name_in_owner = true
 anchors_preset = 2
 anchor_top = 1.0
 anchor_bottom = 1.0
-offset_left = 199.0
-offset_top = -93.0
-offset_right = 242.0
+offset_left = 157.0
+offset_top = -83.0
+offset_right = 200.0
 offset_bottom = -24.0
 grow_vertical = 0
 theme = SubResource("Theme_ys8b8")
