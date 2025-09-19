@@ -5,10 +5,11 @@ const PlayerState = preload("res://scenes/player/player_states.gd").PlayerState
 @onready var player: CharacterBody3D = $".."
 @onready var head: Node3D = %Head
 @onready var eyes: Node3D = %Eyes
+@onready var crosshair: ColorRect = $"../Crosshair"
 
 # --- Head sway / lean ---
 var sway_amount := 0.05
-var sway_speed := 15.0
+var sway_speed := 5.0
 
 # --- Breathing ---
 var base_breath_speed := 1.0
@@ -59,24 +60,36 @@ func _physics_process(delta):
 	else:
 		var speed_factor = player.velocity.length() / player.run_speed
 		speed_factor = clamp(speed_factor, 0.0, 1.0)
-
+		
 		match player.state:
 			PlayerState.IDLE:
+				crosshair.material.set("shader_parameter/radius", 0.03)
+				crosshair.material.set("shader_parameter/opacity", lerp(0.3, 0.65, .75))
 				target_breath_speed = lerp(0.6, 1.0, speed_factor)
 				target_breath_amplitude = lerp(0.015, 0.025, speed_factor)
 			PlayerState.CROUCHING:
+				crosshair.material.set("shader_parameter/radius", 0.03)
+				crosshair.material.set("shader_parameter/opacity", lerp(0.65, 0.25, .75))
 				target_breath_speed = lerp(0.4, 0.8, speed_factor)
 				target_breath_amplitude = lerp(0.01, 0.02, speed_factor)
 			PlayerState.WALKING:
+				crosshair.material.set("shader_parameter/radius", 0.03)
+				crosshair.material.set("shader_parameter/opacity", lerp(0.65, 0.3, .75))
 				target_breath_speed = lerp(1.0, 1.3, speed_factor)
 				target_breath_amplitude = lerp(0.02, 0.03, speed_factor)
 			PlayerState.RUNNING:
+				crosshair.material.set("shader_parameter/radius", 0.03)
+				crosshair.material.set("shader_parameter/opacity", lerp(0.3, 0.25, .75))
 				target_breath_speed = lerp(1.3, 1.9, speed_factor)
 				target_breath_amplitude = lerp(0.03, 0.04, speed_factor)
 			PlayerState.JUMPING:
+				crosshair.material.set("shader_parameter/radius", 0.03)
+				crosshair.material.set("shader_parameter/opacity", lerp(0.65, 0.2, .75))
 				target_breath_speed = lerp(1.5, 2.2, speed_factor)
 				target_breath_amplitude = lerp(0.04, 0.055, speed_factor)
 			PlayerState.ZEROG:
+				crosshair.material.set("shader_parameter/radius", 0.03)
+				crosshair.material.set("shader_parameter/opacity", lerp(0.3, 0.65, .75))
 				target_breath_speed = lerp(0.7, 1.0, speed_factor)
 				target_breath_amplitude = lerp(0.01, 0.02, speed_factor)
 

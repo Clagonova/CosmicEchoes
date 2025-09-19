@@ -1,5 +1,3 @@
-# player_interaction_handler.gd
-
 extends Node3D
 
 signal on_item_picked_up(item)
@@ -28,7 +26,6 @@ func update_focused_item():
 		if collider is InteractableItem:
 			hit_item = collider
 
-	# Odak değişmişse güncelle
 	if hit_item != focused_item:
 		if focused_item != null:
 			focused_item.lose_focus()
@@ -43,14 +40,13 @@ func pickup_item_in_front():
 
 	var item_prefab: String = focused_item.scene_file_path
 	focused_item.queue_free()
+	focused_item = null
 
 	for i in item_types.size():
 		if (item_types[i].item_model_prefab != null 
 		and item_types[i].item_model_prefab.resource_path == item_prefab):
 			print("Item ID: " + str(i) + " Item Name: " + item_types[i].item_name)
 			on_item_picked_up.emit(item_types[i])
-			focused_item = null
 			return
 
 	printerr("Item not found!")
-	focused_item = null

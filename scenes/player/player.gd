@@ -4,6 +4,7 @@ const PlayerState = preload("res://scenes/player/player_states.gd").PlayerState
 
 @onready var vitals: Node3D = $Vitals
 @onready var head: Node3D = %Head
+@onready var inventory_ui: InventoryHandler = %InventoryUI
 
 # --- Movement ---
 @export var walk_speed := 4.0
@@ -81,7 +82,11 @@ func _physics_process(delta):
 
 func _input(event: InputEvent) -> void:
 	if (event.is_action_pressed("inventory")):
-		Input.mouse_mode = Input.MOUSE_MODE_CAPTURED if (Input.mouse_mode == Input.MOUSE_MODE_VISIBLE) else Input.MOUSE_MODE_VISIBLE
+		inventory_ui.visible = !inventory_ui.visible
+		if inventory_ui.visible:
+			Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
+		else:
+			Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 
 
 func _unhandled_input(event):

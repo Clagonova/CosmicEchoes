@@ -35,7 +35,7 @@ func pickup_item(item: ItemData):
 		var new_item = item.item_model_prefab.instantiate() as Node3D
 		
 		player.get_parent().add_child(new_item)
-		new_item.global_position = player.global_position + player.global_transform.basis.z * -1
+		new_item.global_position = get_world_mouse_position()
 
 
 func item_equipped(slot_id: int):
@@ -82,14 +82,27 @@ func get_world_mouse_position() -> Vector3:
 	var mouse_pos = get_viewport().get_mouse_position()
 	var cam = get_viewport().get_camera_3d()
 	var ray_start = cam.project_ray_origin(mouse_pos)
-	var ray_end = ray_start + cam.project_ray_normal(mouse_pos) * cam.global_position.distance_to(player.global_position) * 2.0
+	var ray_dir = cam.project_ray_normal(mouse_pos)
+	var ray_length = cam.global_position.distance_to(player.global_position) * 2.0
+	var ray_end = ray_start + ray_dir * ray_length
+	
 	var world3d: World3D = player.get_world_3d()
 	var space_state = world3d.direct_space_state
 	
-	var query = PhysicsRayQueryParameters3D.create(ray_start, ray_end, collision_mask) 
-	
+	var query = PhysicsRayQueryParameters3D.create(ray_start, ray_end, collision_mask)
 	var results = space_state.intersect_ray(query)
-	if (results):
-		return results["position"] as Vector3 + Vector3(0.0, 0.5, 0.0)
+	
+	var floor_height = 0.2
+	var wall_offset = 0.2
+	
+	if results:
+		var pos = results["position"] as Vector3
+		
+		if results.has("normal"):
+			var normal = results["normal"] as Vector3
+			pos += normal * wall_offset
+		
+		pos.y += floor_height
+		return pos
 	else:
-		return ray_start.lerp(ray_end, 0.5) + Vector3(0.0, 0.5, 0.0)
+		return ray_start.lerp(ray_end, 0.5) + Vector3(0.0, floor_height, 0.0)
