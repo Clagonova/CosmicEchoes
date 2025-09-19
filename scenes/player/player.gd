@@ -26,7 +26,7 @@ const PlayerState = preload("res://scenes/player/player_states.gd").PlayerState
 
 # --- Thruster ---
 @export var thruster_force := 3.0
-@export var thruster_boost_force := 70.0
+@export var thruster_boost_force := 7.0
 @export var thruster_oxygen_rate := 0.8
 @export var thruster_boost_oxygen_rate := 3.8
 
@@ -77,6 +77,11 @@ func _physics_process(delta):
 
 	applyCamSmoothing(delta)
 	move_and_slide()
+
+
+func _input(event: InputEvent) -> void:
+	if (event.is_action_pressed("inventory")):
+		Input.mouse_mode = Input.MOUSE_MODE_CAPTURED if (Input.mouse_mode == Input.MOUSE_MODE_VISIBLE) else Input.MOUSE_MODE_VISIBLE
 
 
 func _unhandled_input(event):

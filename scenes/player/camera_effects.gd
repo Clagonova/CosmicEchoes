@@ -8,7 +8,7 @@ const PlayerState = preload("res://scenes/player/player_states.gd").PlayerState
 
 # --- Head sway / lean ---
 var sway_amount := 0.05
-var sway_speed := 5.0
+var sway_speed := 15.0
 
 # --- Breathing ---
 var base_breath_speed := 1.0

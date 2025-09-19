@@ -1,0 +1,97 @@
+[gd_scene load_steps=6 format=3 uid="uid://c152xf4ysp1y"]
+
+[ext_resource type="Script" uid="uid://c4qb6n2hl038o" path="res://scenes/inventory/inventory_slot.gd" id="1_u1unx"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_1h2uy"]
+bg_color = Color(0.180392, 0.2, 0.211765, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.8, 0.8, 0.8, 0.0980392)
+border_blend = true
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+shadow_color = Color(0, 0, 0, 0.109804)
+shadow_size = 1
+shadow_offset = Vector2(0, 2)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_faiu1"]
+bg_color = Color(0.180392, 0.2, 0.211765, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0, 0, 0, 0.733333)
+border_blend = true
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+shadow_color = Color(0, 0, 0, 0.109804)
+shadow_size = 1
+shadow_offset = Vector2(0, 2)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hosvb"]
+bg_color = Color(0.180392, 0.2, 0.211765, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.8, 0.8, 0.8, 0.733333)
+border_blend = true
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+shadow_color = Color(0, 0, 0, 0.109804)
+shadow_size = 1
+shadow_offset = Vector2(0, 2)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_s22cn"]
+bg_color = Color(0.49, 0.45806834, 0.4067, 0)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.84, 0.64049995, 0.21, 0.73333335)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+shadow_color = Color(0, 0, 0, 0.109804)
+shadow_size = 1
+shadow_offset = Vector2(0, 2)
+
+[node name="InventorySlot" type="Button" node_paths=PackedStringArray("equipped_highlight", "icon_slot")]
+custom_minimum_size = Vector2(32, 32)
+offset_right = 32.0
+offset_bottom = 32.0
+focus_mode = 0
+theme_override_styles/normal = SubResource("StyleBoxFlat_1h2uy")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_faiu1")
+theme_override_styles/hover = SubResource("StyleBoxFlat_hosvb")
+script = ExtResource("1_u1unx")
+equipped_highlight = NodePath("EquippedHighlight")
+icon_slot = NodePath("TextureRect")
+
+[node name="EquippedHighlight" type="Panel" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_s22cn")
+
+[node name="TextureRect" type="TextureRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+expand_mode = 1

@@ -1,4 +1,4 @@
-[gd_scene load_steps=14 format=3 uid="uid://6n0eof8k4mvo"]
+[gd_scene load_steps=15 format=3 uid="uid://6n0eof8k4mvo"]
 
 [ext_resource type="PackedScene" uid="uid://cmmywbr2dt87h" path="res://scenes/player/Player.tscn" id="1_7wkp4"]
 [ext_resource type="PackedScene" uid="uid://cqquqwxo2fj8b" path="res://levels/_skybox/starfield.tscn" id="1_dlgfo"]
@@ -7,6 +7,7 @@
 [ext_resource type="PackedScene" uid="uid://cfcot56qhnd1" path="res://scenes/gravity/gravity_portal.tscn" id="6_bhdgs"]
 [ext_resource type="Material" uid="uid://dy33g0ov2rhu" path="res://levels/prototype/materials/prototype_grid_dark.tres" id="6_of0s4"]
 [ext_resource type="Material" uid="uid://csqe6kmrrvhdh" path="res://levels/prototype/materials/prototype_grid_green.tres" id="7_of0s4"]
+[ext_resource type="PackedScene" uid="uid://dd85ugq0l7xpr" path="res://scenes/items/TestCube.tscn" id="8_jq8qo"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_7wkp4"]
 sky_top_color = Color(0, 0, 0, 1)
@@ -131,6 +132,134 @@ material = ExtResource("7_of0s4")
 transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 2.5, 1.48492, -4)
 size = Vector3(1, 1, 4)
 material = ExtResource("7_of0s4")
+
+[node name="TestItems" type="Node" parent="."]
+
+[node name="ItemTestCube" parent="TestItems" instance=ExtResource("8_jq8qo")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.843933, 1.6559037, -1.5658858)
+
+[node name="ItemTestCube2" parent="TestItems" instance=ExtResource("8_jq8qo")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.168237, 1.6559037, -1.5658858)
+
+[node name="ItemTestCube3" parent="TestItems" instance=ExtResource("8_jq8qo")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.436861, 2.256455, -1.3346851)
+
+[node name="ItemTestCube4" parent="TestItems" instance=ExtResource("8_jq8qo")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.0521274, 2.256455, -2.0319176)
+
+[node name="ItemTestCube5" parent="TestItems" instance=ExtResource("8_jq8qo")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.5851533, 2.8684542, -2.0319176)
+
+[node name="ItemTestCube6" parent="TestItems" instance=ExtResource("8_jq8qo")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.843933, 1.6559037, -0.08720374)
+
+[node name="ItemTestCube7" parent="TestItems" instance=ExtResource("8_jq8qo")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.168237, 1.6559037, -0.08720374)
+
+[node name="ItemTestCube8" parent="TestItems" instance=ExtResource("8_jq8qo")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.436861, 2.256455, 0.14399695)
+
+[node name="ItemTestCube9" parent="TestItems" instance=ExtResource("8_jq8qo")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.0521274, 2.256455, -0.55323553)
+
+[node name="ItemTestCube10" parent="TestItems" instance=ExtResource("8_jq8qo")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.5851533, 2.8684542, -0.55323553)
+
+[node name="ItemTestCube11" parent="TestItems" instance=ExtResource("8_jq8qo")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.6722844, 2.256455, -1.2778323)
+
+[node name="ItemTestCube12" parent="TestItems" instance=ExtResource("8_jq8qo")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.2875507, 2.256455, -1.9750648)
+
+[node name="ItemTestCube13" parent="TestItems" instance=ExtResource("8_jq8qo")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.8205767, 2.8684542, -1.9750648)
+
+[node name="ItemTestCube14" parent="TestItems" instance=ExtResource("8_jq8qo")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.0934734, 2.256455, -1.3346851)
+
+[node name="ItemTestCube15" parent="TestItems" instance=ExtResource("8_jq8qo")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.0934734, 2.8917587, -1.3346851)
+
+[node name="ItemTestCube16" parent="TestItems" instance=ExtResource("8_jq8qo")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.0802717, 2.8917587, -1.3346851)
+
+[node name="ItemTestCube17" parent="TestItems" instance=ExtResource("8_jq8qo")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.0802717, 2.8917587, -0.51782715)
+
+[node name="ItemTestCube18" parent="TestItems" instance=ExtResource("8_jq8qo")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.112964, 2.8917587, 0.03713572)
+
+[node name="ItemTestCube19" parent="TestItems" instance=ExtResource("8_jq8qo")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.3887708, 2.8917587, -0.15115845)
+
+[node name="ItemTestCube20" parent="TestItems" instance=ExtResource("8_jq8qo")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.5766706, 3.5505288, -1.5102438)
+
+[node name="ItemTestCube21" parent="TestItems" instance=ExtResource("8_jq8qo")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.5766706, 3.5505288, -0.43952)
+
+[node name="ItemTestCube22" parent="TestItems" instance=ExtResource("8_jq8qo")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.843933, 1.6559037, 1.278693)
+
+[node name="ItemTestCube23" parent="TestItems" instance=ExtResource("8_jq8qo")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.168237, 1.6559037, 1.278693)
+
+[node name="ItemTestCube24" parent="TestItems" instance=ExtResource("8_jq8qo")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.436861, 2.256455, 1.5098937)
+
+[node name="ItemTestCube25" parent="TestItems" instance=ExtResource("8_jq8qo")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.0934734, 2.256455, 1.5098937)
+
+[node name="ItemTestCube26" parent="TestItems" instance=ExtResource("8_jq8qo")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.0934734, 2.8917587, 1.5098937)
+
+[node name="ItemTestCube27" parent="TestItems" instance=ExtResource("8_jq8qo")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.0802717, 2.8917587, 1.5098937)
+
+[node name="ItemTestCube28" parent="TestItems" instance=ExtResource("8_jq8qo")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.0802717, 2.8917587, 2.3267517)
+
+[node name="ItemTestCube29" parent="TestItems" instance=ExtResource("8_jq8qo")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.112964, 2.8917587, 2.8817143)
+
+[node name="ItemTestCube30" parent="TestItems" instance=ExtResource("8_jq8qo")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.3887708, 2.8917587, 2.6934204)
+
+[node name="ItemTestCube31" parent="TestItems" instance=ExtResource("8_jq8qo")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.5766706, 3.5505288, 1.334335)
+
+[node name="ItemTestCube32" parent="TestItems" instance=ExtResource("8_jq8qo")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.5766706, 3.5505288, 2.4050589)
+
+[node name="ItemTestCube33" parent="TestItems" instance=ExtResource("8_jq8qo")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.0521274, 2.256455, 0.8126612)
+
+[node name="ItemTestCube34" parent="TestItems" instance=ExtResource("8_jq8qo")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.5851533, 2.8684542, 0.8126612)
+
+[node name="ItemTestCube35" parent="TestItems" instance=ExtResource("8_jq8qo")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.843933, 1.6559037, 2.757375)
+
+[node name="ItemTestCube36" parent="TestItems" instance=ExtResource("8_jq8qo")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.168237, 1.6559037, 2.757375)
+
+[node name="ItemTestCube37" parent="TestItems" instance=ExtResource("8_jq8qo")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.436861, 2.256455, 2.9885757)
+
+[node name="ItemTestCube38" parent="TestItems" instance=ExtResource("8_jq8qo")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.0521274, 2.256455, 2.2913432)
+
+[node name="ItemTestCube39" parent="TestItems" instance=ExtResource("8_jq8qo")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.5851533, 2.8684542, 2.2913432)
+
+[node name="ItemTestCube40" parent="TestItems" instance=ExtResource("8_jq8qo")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.6722844, 2.256455, 1.5667465)
+
+[node name="ItemTestCube41" parent="TestItems" instance=ExtResource("8_jq8qo")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.2875507, 2.256455, 0.869514)
+
+[node name="ItemTestCube42" parent="TestItems" instance=ExtResource("8_jq8qo")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.8205767, 2.8684542, 0.869514)
 
 [connection signal="entered_gravity_zone" from="PrototypeStation/GravityPortal" to="Player" method="_on_portal_entered"]
 [connection signal="exited_gravity_zone" from="PrototypeStation/GravityPortal" to="Player" method="_on_portal_exited"]
