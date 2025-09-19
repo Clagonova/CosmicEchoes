@@ -23,10 +23,12 @@ func fill_slot(data: ItemData, equipped: bool):
 	if (slot_data != null):
 		slot_filled = true
 		icon_slot.texture = data.icon
+		tooltip_text = data.item_name
 		# amount_slot = data.amount
 	else:
 		slot_filled = false
 		icon_slot.texture = null
+		tooltip_text = ""
 
 func _get_drag_data(_at_position: Vector2) -> Variant:
 	if (slot_filled):
