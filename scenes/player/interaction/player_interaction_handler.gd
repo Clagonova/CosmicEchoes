@@ -1,42 +1,56 @@
-extends Area3D
+# player_interaction_handler.gd
+
+extends Node3D
 
 signal on_item_picked_up(item)
 
 @export var item_types: Array[ItemData] = []
 
-var nearby_bodies: Array[InteractableItem]
+@onready var raycast: RayCast3D = %RayCast3D
+
+var focused_item: InteractableItem = null
+
+
+func _process(_delta: float) -> void:
+	update_focused_item()
 
 
 func _input(event: InputEvent) -> void:
-	if (event.is_action_pressed("interact")):
-		pickup_nearest_item()
+	if event.is_action_pressed("interact"):
+		pickup_item_in_front()
 
-func pickup_nearest_item():
-	var nearest_item: InteractableItem = null
-	var nearest_item_distance: float = INF
-	for item in nearby_bodies:
-		if (item.global_position.distance_to(global_position) < nearest_item_distance):
-			nearest_item_distance = item.global_position.distance_to(global_position)
-			nearest_item = item
-	
-	if (nearest_item != null):
-		nearest_item.queue_free()
-		nearby_bodies.remove_at(nearby_bodies.find(nearest_item))
-		var item_prefab: String = nearest_item.scene_file_path
-		for i in item_types.size():
-			if (item_types[i].item_model_prefab != null and item_types[i].item_model_prefab.resource_path == item_prefab):
-				print("Item ID: " + str(i) + " Item Name: " + item_types[i].item_name)
-				on_item_picked_up.emit(item_types[i])
-				return
-		
-		printerr("Item not found!")
 
-func on_object_entered_area(body: Node3D):
-	if (body is InteractableItem):
-		body.gain_focus()
-		nearby_bodies.append(body) 
+func update_focused_item():
+	var hit_item: InteractableItem = null
 
-func on_object_exited_area(body: Node3D):
-	if (body is InteractableItem and nearby_bodies.has(body)):
-		body.lose_focus()
-		nearby_bodies.remove_at(nearby_bodies.find(body))
+	if raycast.is_colliding():
+		var collider = raycast.get_collider()
+		if collider is InteractableItem:
+			hit_item = collider
+
+	# Odak değişmişse güncelle
+	if hit_item != focused_item:
+		if focused_item != null:
+			focused_item.lose_focus()
+		if hit_item != null:
+			hit_item.gain_focus()
+		focused_item = hit_item
+
+
+func pickup_item_in_front():
+	if focused_item == null:
+		return
+
+	var item_prefab: String = focused_item.scene_file_path
+	focused_item.queue_free()
+
+	for i in item_types.size():
+		if (item_types[i].item_model_prefab != null 
+		and item_types[i].item_model_prefab.resource_path == item_prefab):
+			print("Item ID: " + str(i) + " Item Name: " + item_types[i].item_name)
+			on_item_picked_up.emit(item_types[i])
+			focused_item = null
+			return
+
+	printerr("Item not found!")
+	focused_item = null

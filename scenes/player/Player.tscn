@@ -1,27 +1,13 @@
-[gd_scene load_steps=13 format=3 uid="uid://cmmywbr2dt87h"]
+[gd_scene load_steps=7 format=3 uid="uid://cmmywbr2dt87h"]
 
 [ext_resource type="Script" uid="uid://cqqdd0j4flgps" path="res://scenes/player/player.gd" id="1_wr5hl"]
 [ext_resource type="PackedScene" uid="uid://ctl0tnkew347e" path="res://scenes/player/Vitals.tscn" id="2_4kuee"]
 [ext_resource type="Script" uid="uid://nwckdynyfetf" path="res://scenes/player/camera_effects.gd" id="3_4kuee"]
-[ext_resource type="Script" uid="uid://ct1q8b1o1c8ft" path="res://scenes/player/interaction/player_interaction_handler.gd" id="4_tpg5x"]
-[ext_resource type="Script" uid="uid://cuueqwmrdkjq1" path="res://scenes/inventory/item_data.gd" id="5_c3xxp"]
-[ext_resource type="PackedScene" uid="uid://dd85ugq0l7xpr" path="res://scenes/items/TestCube.tscn" id="6_c3xxp"]
-[ext_resource type="Texture2D" uid="uid://l6qqo0hv6wbm" path="res://assets/textures/items/icons/test_cube.png" id="6_npwbq"]
 [ext_resource type="Script" uid="uid://q2vouov3xsrp" path="res://scenes/inventory/inventory_handler.gd" id="8_v42im"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_x7p2l"]
 radius = 0.4
 height = 1.8
-
-[sub_resource type="Resource" id="Resource_npwbq"]
-script = ExtResource("5_c3xxp")
-item_name = "Test Cube"
-icon = ExtResource("6_npwbq")
-item_model_prefab = ExtResource("6_c3xxp")
-metadata/_custom_type_script = "uid://cuueqwmrdkjq1"
-
-[sub_resource type="SphereShape3D" id="SphereShape3D_v42im"]
-radius = 1.8
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_c3xxp"]
 bg_color = Color(0.223238, 0.24924, 0.26794, 1)
@@ -62,19 +48,15 @@ unique_name_in_owner = true
 [node name="Camera3D" type="Camera3D" parent="Head/Eyes"]
 unique_name_in_owner = true
 
+[node name="RayCast3D" type="RayCast3D" parent="Head/Eyes/Camera3D"]
+unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0)
+target_position = Vector3(0, -2.6, 0)
+collision_mask = 2
+
 [node name="CeilingCheck" type="RayCast3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, 0)
 target_position = Vector3(0, 1, 0)
-
-[node name="InteractionArea" type="Area3D" parent="."]
-collision_layer = 0
-collision_mask = 2
-script = ExtResource("4_tpg5x")
-item_types = Array[ExtResource("5_c3xxp")]([SubResource("Resource_npwbq")])
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="InteractionArea"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
-shape = SubResource("SphereShape3D_v42im")
 
 [node name="InventoryUI" type="Control" parent="." node_paths=PackedStringArray("player", "inventory_grid")]
 layout_mode = 3
@@ -123,7 +105,3 @@ size_flags_horizontal = 4
 theme_override_constants/h_separation = 2
 theme_override_constants/v_separation = 2
 columns = 10
-
-[connection signal="body_entered" from="InteractionArea" to="InteractionArea" method="on_object_entered_area"]
-[connection signal="body_exited" from="InteractionArea" to="InteractionArea" method="on_object_exited_area"]
-[connection signal="on_item_picked_up" from="InteractionArea" to="InventoryUI" method="pickup_item"]
