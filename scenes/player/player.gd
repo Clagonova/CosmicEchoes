@@ -108,22 +108,28 @@ func applyCamSmoothing(_delta) -> void:
 
 func handle_input() -> Dictionary:
 	var input_dir = Input.get_vector("move_left", "move_right", "move_forward", "move_back")
-	
+
 	var cam_forward = head.global_transform.basis.z
 	cam_forward.y = 0
 	cam_forward = cam_forward.normalized()
-	
+
 	var cam_right = head.global_transform.basis.x
 	cam_right.y = 0
 	cam_right = cam_right.normalized()
-	
+
 	var direction = (cam_forward * input_dir.y + cam_right * input_dir.x).normalized()
-	
+
+	# Sadece ileri ve ileri çaprazda sprint aktif olsun
+	var sprint_pressed = Input.is_action_pressed("sprint")
+	var can_sprint = false
+	if sprint_pressed and -input_dir.y > 0:
+		can_sprint = true
+
 	return {
 		"direction": direction,
 		"moving": direction.length() > 0.01,
 		"crouch": Input.is_action_pressed("crouch"),
-		"sprint": Input.is_action_pressed("sprint"),
+		"sprint": can_sprint,
 		"jump": Input.is_action_pressed("jump"),
 		"jump_pressed": Input.is_action_just_pressed("jump"),
 	}

@@ -25,6 +25,7 @@ size = Vector3(0.5, 0.5, 0.5)
 [node name="ItemTestCube" type="RigidBody3D" node_paths=PackedStringArray("ItemHighlightMesh")]
 collision_layer = 2
 collision_mask = 3
+mass = 4.0
 script = ExtResource("1_as8a6")
 ItemHighlightMesh = NodePath("Mesh/Outline")
 
